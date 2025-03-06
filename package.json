@@ -1,0 +1,20 @@
+{
+  "private": "true",
+  "name": "procat",
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.9.0",
+  "scripts": {
+    "build": "turbo run build --env-mode=loose",
+    "dev": "turbo run dev",
+    "start": "turbo run start --env-mode=loose",
+    "db:check": "turbo run db:check",
+    "db:push": "turbo run db:push",
+    "db:generate": "turbo run db:generate",
+    "db:studio": "turbo run db:studio"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.26.0",
+    "drizzle-orm": "^0.37.0",
+    "turbo": "^2.2.3"
+  }
+}

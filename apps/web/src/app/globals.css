@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+    --radius: 0.3rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+:root {
+  --remotion-font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    Noto Sans, sans-serif, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --base-size: 48px;
+}
+
+.audio-viz {
+  display: flex;
+  flex-direction: row;
+  height: calc(var(--base-size) * 4);
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--base-size) * 0.25);
+  margin-top: var(--base-size);
+}
+
+.bar {
+  border-radius: calc(var(--base-size) * 0.25);
+  width: calc(var(--base-size) * 0.25);
+}
+
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cover {
+  border-radius: 6px;
+}
+
+.title {
+  margin-left: var(--base-size);
+  line-height: 1.25;
+  font-weight: 800;
+  color: rgba(55, 65, 81, 1);
+  font-size: var(--base-size);
+}
+
+.captions {
+  margin-top: calc(var(--base-size) * 0.5);
+  font-size: calc(var(--base-size) * 1.5);
+  font-weight: 600;
+}
+
+.promo-container {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(55, 65, 81, 1);
+  font-family: var(--remotion-font);
+}
+
+.promo-composition {
+  position: absolute;
+  left: calc(var(--base-size) * 9);
+  top: calc(var(--base-size) * -5);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-radius: calc(var(--base-size) * 0.75);
+  overflow: hidden;
+}
+
+.free-template {
+  width: calc(var(--base-size) * 16);
+  left: calc(var(--base-size) * 0.75);
+  font-size: calc(var(--base-size) * 1.5);
+  line-height: calc(var(--base-size) * 2);
+  font-weight: 800;
+  filter: drop-shadow(0 20px 13px rgba(0, 0, 0, 0.03))
+    drop-shadow(0 8px 5px rgba(0, 0, 0, 0.08));
+  left: calc(var(--base-size) * 0.75);
+  top: calc(var(--base-size) * 0.25);
+  position: absolute;
+  color: rgba(107, 114, 128, 1);
+}
+
+.description {
+  color: rgba(107, 114, 128, 1);
+  line-height: 1;
+  font-weight: normal;
+  font-size: var(--base-size);
+  filter: drop-shadow(0 20px 13px rgba(0, 0, 0, 0.03))
+    drop-shadow(0 8px 5px rgba(0, 0, 0, 0.08));
+  width: calc(var(--base-size) * 13);
+  left: calc(var(--base-size) * 0.75);
+  top: calc(var(--base-size) * 2.5);
+  position: absolute;
+}
+
+.tagline {
+  font-weight: 800;
+  font-size: calc(var(--base-size) * 2.25);
+  line-height: calc(var(--base-size) * 2.5);
+  color: rgba(251, 191, 36, 1);
+  filter: drop-shadow(0 20px 13px rgba(0, 0, 0, 0.03))
+    drop-shadow(0 8px 5px rgba(0, 0, 0, 0.08));
+  width: calc(var(--base-size) * 16);
+  position: absolute;
+  top: calc(var(--base-size) * 7);
+  left: calc(var(--base-size) * 0.75);
+}

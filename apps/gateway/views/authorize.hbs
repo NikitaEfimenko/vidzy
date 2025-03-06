@@ -1,0 +1,89 @@
+
+<div class="w-full max-w-md bg-white rounded-2xl shadow-sm p-8 space-y-6">
+  <!-- Logo -->
+  <div class="flex justify-center items-center relative gap-6">
+    <img src="https://avatars.githubusercontent.com/u/29332092?v=4" alt="Procat Logo"
+      class="w-16 h-16 rounded-xl shadow-2xl ring-1 ring-[rgb(250,204,21)]">
+    <span class="text-4xl">🤝</span>
+    <img src="https://avatars.githubusercontent.com/u/29332092?v=4" alt="Procat Logo"
+      class="w-16 h-16 rounded-xl shadow-2xl ring-1 ring-[rgb(250,204,21)]">
+  </div>
+
+  <!-- Heading -->
+  <h1 class="text-3xl font-bold text-center text-gray-900">Sign in to <span class="text-[rgb(250,204,21)]">{{client_name}}</span> with Procat</h1>
+
+
+
+  <!-- Social Login Buttons -->
+  <div class="flex rounded-lg border border-gray-200 items-center justify-center gap-3 p-4">
+        <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="saas_prokat_bot"
+          data-size="medium" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+  </div>
+  <!-- Divider -->
+  <div class="relative">
+    <div class="absolute inset-0 flex items-center">
+      <div class="w-full border-t border-gray-200"></div>
+    </div>
+    <div class="relative flex justify-center text-sm">
+      <span class="px-4 bg-white text-gray-500">or</span>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="auth-form" hx-push-url="true" hx-post="/auth/authorize/confirm/telegram" hx-target="#response"
+    class="flex flex-col gap-4">
+    <input type="hidden" name="client_id" value="{{client_id}}">
+    <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+    <input type="hidden" name="scope" value="{{scope}}">
+    <input type="hidden" name="state" value="{{state}}">
+    <input type="hidden" name="code_challenge" value="{{code_challenge}}">
+
+    <input type="hidden" id="telegram_id" name="telegram_id">
+    <input type="hidden" id="telegram_first_name" name="telegram_first_name">
+    <input type="hidden" id="telegram_last_name" name="telegram_last_name">
+    <input type="hidden" id="telegram_username" name="telegram_username">
+    <input type="hidden" id="telegram_photo_url" name="telegram_photo_url">
+    <input type="hidden" id="telegram_auth_date" name="telegram_auth_date">
+    <input type="hidden" id="telegram_hash" name="telegram_hash">
+    {{!-- <button type="submit" hx-post="/auth/authorize/confirm"
+      class="w-full bg-[rgb(250,204,21)] text-white py-3 rounded-lg hover:bg-[rgb(250,204,21)] transition-colors">
+      Continue
+    </button> --}}
+    <button type="submit" hx-get="/auth/authorize/deny"
+      class="w-full border border-[#F06543] text-[#F06543] py-3 rounded-lg hover:border-[#F06543] transition-colors">
+      Deny
+    </button>
+  </form>
+
+
+  <div class="text-center text-xs">
+    <p class="text-gray-500">
+      Want to monetize your own SaaS?
+      <a href="https://docs.procat-saas.online" class="text-[rgb(250,204,21)] font-bold hover:underline">Monetize with Procat</a>
+    </p>
+  </div>
+
+    <p class="text-center text-xs text-gray-500">
+    By signing up, you agree to our
+    <a href="https://procat-saas.online/terms" class="text-[rgb(250,204,21)] font-bold  hover:underline">Terms</a> &
+    <a href="https://docs.procat-saas.online/privacy" class="text-[rgb(250,204,21)] font-bold  hover:underline">Privacy</a>
+  </p>
+
+  <!-- HTMX Response Target -->
+  <div id="response"></div>
+</div>
+
+<script type="text/javascript">
+  function onTelegramAuth(user) {
+    console.log(user)
+    document.getElementById('telegram_id').value = user.id;
+    document.getElementById('telegram_first_name').value = user.first_name;
+    document.getElementById('telegram_last_name').value = user.last_name;
+    document.getElementById('telegram_username').value = user.username || '';
+    document.getElementById('telegram_photo_url').value = user.photo_url || '';
+    document.getElementById('telegram_auth_date').value = user.auth_date || '';
+    document.getElementById('telegram_hash').value = user.hash || '';
+
+    htmx.trigger('#auth-form', 'submit');
+  }
+</script>

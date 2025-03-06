@@ -1,0 +1,26 @@
+{
+  "name": "@vidzy/database",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "start": "",
+    "check-types": "tsc --noEmit",
+    "db:check": "drizzle-kit check",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio --verbose"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "postgres": "^3.4.4",
+    "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.25.0",
+    "drizzle-orm": "0.34.0"
+  }
+}
