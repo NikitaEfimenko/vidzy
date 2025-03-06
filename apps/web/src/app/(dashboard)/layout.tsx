@@ -86,7 +86,7 @@ export default async function RootLayout({
         <SidebarProvider>
           <AppSidebar
             user={<UserAvatar />}
-            pro={<Guard level="Procat - для создателей"
+            pro={<Guard level="Базовая подписка Vidzy"
               noAccessFallback={sidebarAccessFallback}
               expiredFallback={sidebarAccessFallback}
             ></Guard>}
@@ -114,17 +114,14 @@ export default async function RootLayout({
             <Providers>
               <main>
                 <div className="px-4">
-                  {/* <Guard level="Procat - для создателей"
+                  <Guard level="Базовая подписка Vidzy"
                     expiredFallback={expiredFallback}
                     noAccessFallback={notAccessFallback}
                   >
                     <>
                       {children}
                     </>
-                  </Guard> */}
-                  <>
-                    {children}
-                  </>
+                  </Guard>
                 </div>
               </main>
               <Toaster />

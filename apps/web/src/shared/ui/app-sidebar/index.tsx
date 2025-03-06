@@ -9,7 +9,8 @@ import {
   SpeakerIcon,
   TextIcon,
   Users2Icon,
-  Video
+  Video,
+  LayoutDashboard
 } from "lucide-react"
 import * as React from "react"
 
@@ -28,6 +29,8 @@ import {
 } from "@/shared/ui/sidebar"
 import Link from "next/link"
 import { Badge } from "../badge"
+import { MdDashboard } from "react-icons/md"
+import { FaDashcube } from "react-icons/fa"
 
 const data = {
   user: {
@@ -37,28 +40,23 @@ const data = {
   },
   navMain: [
     {
-      title: "Register new SaaS",
-      url: "/register",
-      icon: PlusCircle,
-    },
-    {
-      title: "Subscriptions",
-      url: "/subscriptions",
-      icon: CoinsIcon,
+      title: "Attachments",
+      url: "/attachments",
+      icon: FilesIcon,
       items: []
     },
     {
-      title: "Users",
-      url: "/users",
-      icon: Users2Icon,
+      title: "Generator",
+      url: "/renderer",
+      icon: Video,
       items: []
     },
-    // {
-    //   title: "Dashboard",
-    //   url: "/dashboard",
-    //   icon: LayoutDashboard,
-    //   items: []
-    // },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+      items: []
+    },
     // {
     //   title: "Documentation",
     //   url: "/docs/intro",

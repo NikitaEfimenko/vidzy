@@ -92,7 +92,7 @@ export default async function RootLayout({
               </div>
               </Link>
             }
-            <Guard level="Procat - для создателей"
+            <Guard level="Базовая подписка Vidzy"
               expiredFallback={<></>}
               noAccessFallback={<></>}
             >

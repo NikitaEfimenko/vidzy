@@ -98,10 +98,12 @@ export default async function HomePage() {
                   Login with Procat
                 </Button>
               }
-            />: <Button variant="secondary" className="flex items-center gap-2">
-            <MdDashboard size={18} />
-            Dashboard
-          </Button>}
+            /> : <Link href="/dashboard">
+              <Button variant="secondary" className="flex items-center gap-2">
+                <MdDashboard size={18} />
+                Dashboard
+              </Button>
+            </Link>}
           </Card>
 
         </div>
