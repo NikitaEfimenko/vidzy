@@ -1,19 +1,19 @@
 'use client'
-import { Composition } from "remotion";
-import * as SimplePreview from "./scenes/simple-preview" 
+import { CalculateMetadataFunction, Composition } from "remotion";
+import { scenes } from "./scenes";
+import { z } from "zod";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      <Composition
-        id={SimplePreview.compositionName}
-        component={SimplePreview.SimplePreview}
-        {...SimplePreview.config}
-        schema={SimplePreview.SimplePreviewSchema}
-        defaultProps={{
-          "count": "5"
-        }}
-      />
+      {scenes.map((scenas) => <Composition<typeof scenas.schema, z.infer<typeof scenas.schema>>
+        {...scenas.config}
+        id={scenas.compositionName}
+        component={scenas.composition as (props: z.infer<typeof scenas.schema>) => JSX.Element}
+        schema={scenas.schema}
+        defaultProps={scenas.initInputProps}
+        calculateMetadata={scenas.calculateMetadata as CalculateMetadataFunction<z.infer<typeof scenas.schema>>}
+      />)}
     </>
   );
 };

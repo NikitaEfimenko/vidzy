@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsObject } from 'class-validator';
+import { IsString, IsNotEmpty, IsObject, IsUUID } from 'class-validator';
 
 export class RenderBodyDto {
   @IsString()
@@ -7,6 +7,9 @@ export class RenderBodyDto {
 
   @IsObject()
   inputProps: Record<string, any>;
+
+  @IsUUID()
+  userId: string
 }
 
 export class CompositionListResponse {

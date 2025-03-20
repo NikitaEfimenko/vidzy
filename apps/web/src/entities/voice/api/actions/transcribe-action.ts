@@ -18,6 +18,11 @@ export const transcribeAction = async (
 
   const parsed = FileSchema.safeParse(formData['file'])
   const session = await auth()
+  if (!session?.user) return {
+    isSuccess: false,
+    issues: '401',
+    result: null
+  }
   if (!parsed.success) {
     return {
       result: null,
@@ -25,8 +30,8 @@ export const transcribeAction = async (
       issues: parsed.error.message
     }
   }
-  console.log(session)
   try {
+    data.append('userId', session.user.id)
     const renderHost = process.env?.RENDERER_HOST
     const res = await fetch(`${renderHost}/voice/transcribe`, {
       method: "POST",
@@ -37,7 +42,7 @@ export const transcribeAction = async (
       credentials: "include"
     })
     const resData = await res.json() as Partial<FormState>
-    console.log(resData)
+
     return {
       result: resData ?? null,
       isSuccess: true

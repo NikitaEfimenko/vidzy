@@ -29,18 +29,7 @@ export class AttachmentsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadAttachmentDto
   ) {
-    // Загружаем файл в Minio
-    const fileName = await this.storageService.uploadFile(file);
-    const fileUrl = await this.storageService.getFileUrl(fileName);
-    // Фиксируем в БД
-    const savedAttachment = await this.attachmentsService.create({
-      ...uploadDto,
-      public: uploadDto.public == 'true',
-      fileUrl,
-      fileName
-    });
-
-    return { fileName, fileUrl, attachment: savedAttachment };
+    return this.attachmentsService.upload(file, uploadDto)
   }
 
   @Get('user/:userId')

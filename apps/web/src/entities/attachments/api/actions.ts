@@ -15,12 +15,12 @@ type FormState = {
 }
 
 export const uploadAttachmentAction = async (
-  clientId: string | undefined,
   isPublic: boolean,
   prevState: FormState,
   data: FormData
 ): Promise<FormState> => {
   const formData = Object.fromEntries(data)
+  console.log(formData)
   const parsed = CreateAttachmentDto.safeParse(formData)
   const session = await auth()
   if (!session?.user) return {
@@ -36,13 +36,10 @@ export const uploadAttachmentAction = async (
     }
   }
   try {
-    if (!!clientId) {
-      data.append('clientId', clientId)
-    }
     data.append('userId', session.user.id)
     data.append('public', JSON.stringify(isPublic))
     console.log(data)
-    const host = process.env?.PROCAT_ID_HOST!
+    const host = process.env?.RENDERER_HOST!
     console.log(host)
     const res = await fetch(`${host}/attachments/upload`, {
       method: "POST",
@@ -50,7 +47,7 @@ export const uploadAttachmentAction = async (
     })
     const resData = await res.json() as Partial<FormState>
     console.log(resData)
-    revalidatePath("/register")
+    revalidatePath("/attachments")
     return {
       url: resData.url ?? null,
       isSuccess: true
@@ -104,7 +101,7 @@ export const removeAttachment = async (
       .where(eq(attachments.id, id))
       .returning();
 
-    revalidatePath("/register")
+    revalidatePath("/attachments")
   } catch (e) {
     return {
       message: String(e)

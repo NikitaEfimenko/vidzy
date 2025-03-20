@@ -1,5 +1,6 @@
 
 export class GenerateVoiceDto {
   text:  string;
-  voicePreset: string
+  voicePreset: string;
+  userId: string;
 }

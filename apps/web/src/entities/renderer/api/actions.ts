@@ -1,5 +1,6 @@
 'use server'
 
+import { auth } from "@/app/config/auth"
 import { RenderVideoDtoSchema } from "../dto/render"
 
 type FormState = {
@@ -9,12 +10,23 @@ type FormState = {
 }
 
 export const renderVideoAction = async (
+  compositionId: string,
   prevState: FormState,
   data: FormData 
 ): Promise<FormState> => {
-  const formData = Object.fromEntries(data)
-  const parsed = RenderVideoDtoSchema.safeParse(formData)
 
+  const formData = Object.fromEntries(data)
+  const d = {
+    inputProps: JSON.stringify(formData),
+    compositionId
+  }
+  const session = await auth()
+  if (!session?.user) return {
+    isSuccess: false,
+    issues: '401',
+    url: null
+  }
+  const parsed = RenderVideoDtoSchema.safeParse(d)
   if (!parsed.success) {
     return {
       url: null,
@@ -24,12 +36,14 @@ export const renderVideoAction = async (
   }
   try {
     const renderHost = process.env?.RENDERER_HOST
-    parsed.data.inputProps
+    console.log(renderHost)
+    console.log(parsed.data.inputProps)
     const res = await fetch(`${renderHost}/renderer`, {
       method: "POST",
       body: JSON.stringify({
         ...parsed.data,
-        inputProps: JSON.parse(parsed.data.inputProps)
+        inputProps: JSON.parse(parsed.data.inputProps),
+        userId: session.user.id
       }),
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +54,8 @@ export const renderVideoAction = async (
       url: resData.url ?? null,
       isSuccess: true
     }
-  } catch {
+  } catch (e: any) {
+    console.log(e)
     return {
       url: null,
       isSuccess: false,

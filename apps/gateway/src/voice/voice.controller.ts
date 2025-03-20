@@ -1,53 +1,66 @@
-import { Controller, Get,Res, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, HttpException, UseGuards, Req } from '@nestjs/common';
-import { VoiceService } from './voice.service';
-import { GenerateVoiceDto } from './dto/generate-voice.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, HttpException, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
+import { GenerateVoiceDto } from './dto/generate-voice.dto';
+import { VoiceService } from './voice.service';
 
 @Controller('voice')
 export class VoiceController {
-  constructor(private readonly voiceService: VoiceService) {}
+  constructor(
+    private readonly voiceService: VoiceService
+  ) { }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post('generate')
-  generateVoice(
+  async generateVoice(
     @Body() dto: GenerateVoiceDto,
     @Req() req: Request,
   ) {
-    const userEl = req.user as any
-    return this.voiceService.generateTTS(dto, userEl.sub);
+    // const userEl = req.user as any
+    const userId = dto.userId
+    // return this.voiceService.generateTTS(dto, userEl.sub);
+    return this.voiceService.generateTTS(dto, userId);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/transcribe')
+  // @UseGuards(AuthGuard('jwt'))
+  @Post('transcribe')
   @UseInterceptors(FileInterceptor('file'))
   async transcribe(
     @UploadedFile() file: Express.Multer.File,
+    @Body() dto: {
+      userId: string
+    },
     @Req() req: Request,
   ) {
-    console.log(file)
     if (!file) {
       throw new HttpException('File is required', 400);
     }
-    const userEl = req.user as any
-    return this.voiceService.transcribe(file, userEl.sub);
+    // const userEl = req.user as any
+    const userId = dto.userId
+    console.log(userId, "is userId")
+    // return this.voiceService.transcribe(file, userEl.sub);
+    return this.voiceService.transcribe(file, userId);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/separate-instrumental')
+  // @UseGuards(AuthGuard('jwt'))
+  @Post('separate')
   @UseInterceptors(FileInterceptor('file'))
-  async separateInstrumental(
+  async separate(
     @UploadedFile() file: Express.Multer.File,
+    @Body() dto: {
+      userId: string
+    },
     @Req() req: Request,
   ) {
-
     if (!file) {
       throw new HttpException('File is required', 400);
     }
-    const userEl = req.user as any
-    const result = await this.voiceService.separateInstrumental(file, userEl.sub);
-    return result
+    // const userEl = req.user as any
+    const userId = dto.userId
+    console.log(userId, "is userId")
+    // return this.voiceService.transcribe(file, userEl.sub);
+    return this.voiceService.separateInstrumental(file, userId);
   }
 
 }

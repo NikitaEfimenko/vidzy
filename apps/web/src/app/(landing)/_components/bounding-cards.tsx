@@ -140,7 +140,7 @@ export default function BounceCards({
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
         >
-          <video autoPlay muted loop className="aspect-[3/4] w-full h-full object-cover" src={src} />
+          <video className="aspect-[3/4] w-full h-full object-cover" src={src} />
         </div>
       ))}
     </div>

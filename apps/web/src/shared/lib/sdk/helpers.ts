@@ -10,9 +10,6 @@ export const checkAccess = (subscriptions: TSubscription[], level: string): Acce
   const endDateUtc = new Date(sub.endDate).getTime(); // endDate уже в UTC
   const nowUtc = Date.now(); // Date.now() возвращает время в UTC
 
-  console.log(endDateUtc, new Date(endDateUtc).toISOString(), "is date (UTC)");
-  console.log(nowUtc, new Date(nowUtc).toISOString(), "is now (UTC)");
-
   return (nowUtc < endDateUtc) ? "success" : "expired";
 }
 

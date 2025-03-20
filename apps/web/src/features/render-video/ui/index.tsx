@@ -1,19 +1,19 @@
 import { renderVideoAction } from "@/entities/renderer/api/actions"
-import * as SimplePreview from "@/remotion/scenes/simple-preview"
 import { Button } from "@/shared/ui/button"
 import { BugOffIcon, FileIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect } from "react"
 import { useFormState, useFormStatus } from "react-dom"
 import { toast } from "sonner"
-import { z } from "zod"
 
 export const RenderVideoCTA = ({
-  inputProps
+  inputProps,
+  compositionId
 }: {
-  inputProps: any
+  inputProps: any,
+  compositionId: string
 }) => {
-  const [state, action] = useFormState(renderVideoAction, {
+  const [state, action] = useFormState(renderVideoAction.bind(null, compositionId), {
     url: null,
     isSuccess: false
   })
@@ -25,7 +25,7 @@ export const RenderVideoCTA = ({
   }, [state.issues])
 
   return <form action={action} className="flex gap-4 items-center">
-    <input name="compositionId" value={SimplePreview.compositionName} type="hidden"></input>
+    <input name="compositionId" value={compositionId} type="hidden"></input>
     <input name="inputProps" value={JSON.stringify(inputProps)} type="hidden"></input>
     <Button
       disabled={pending}

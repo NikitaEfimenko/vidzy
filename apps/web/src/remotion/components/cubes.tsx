@@ -1,3 +1,4 @@
+'use client'
 import { Physics, usePlane, useBox } from '@react-three/cannon'
 import { AbsoluteFill, useVideoConfig } from 'remotion'
 import { ThreeCanvas, useVideoTexture } from "@remotion/three";

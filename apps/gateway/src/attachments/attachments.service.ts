@@ -5,11 +5,14 @@ import { DRIZZLE } from 'src/database/database.module';
 import { DrizzleDB } from 'src/database/types'
 import { attachments } from '@vidzy/database';
 import { eq } from 'drizzle-orm';
+import { StorageService } from 'src/storage/storage.service';
+import { UploadAttachmentDto } from './dto/upload-attachment.dto';
 
 @Injectable()
 export class AttachmentsService {
   constructor(
-    @Inject(DRIZZLE) private db: DrizzleDB
+    @Inject(DRIZZLE) private db: DrizzleDB,
+    private storageService: StorageService
   ) {}
   create(createAttachmentDto: CreateAttachmentDto) {
     return this.db.insert(attachments).values(createAttachmentDto).returning();
@@ -17,6 +20,19 @@ export class AttachmentsService {
 
   findAll() {
     return this.db.select().from(attachments).execute()
+  }
+
+  async upload(file: Express.Multer.File, dto: UploadAttachmentDto) {
+    const fileName = await this.storageService.uploadFile(file);
+    const fileUrl = await this.storageService.getFileUrl(fileName);
+    const savedAttachment = await this.create({
+      ...dto,
+      public: dto.public == 'true',
+      fileUrl,
+      fileName
+    });
+
+    return { fileName, fileUrl, attachment: savedAttachment };
   }
 
   async findByUserId(userId: string) {

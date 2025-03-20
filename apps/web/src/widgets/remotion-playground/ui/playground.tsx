@@ -1,8 +1,7 @@
 
 'use client'
 import { renderVideoAction } from "@/entities/renderer/api/actions"
-import { Card, CardFooter } from "@/shared/ui/card"
-// import * as VideoPreviewScene from "@/remotion/scenes/simple-preview"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/ui/card"
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta"
 import { VideoPlayground } from "@/widgets/remotion-playground/ui"
 import { useDeferredValue, useState } from "react"
@@ -12,29 +11,45 @@ type PlaygroundProps<T extends z.ZodType<any, any, any>,> = {
   composition: (props: any) => React.JSX.Element,
   config: Record<string, any>,
   schema: T,
-  initInputProps: z.infer<T>
+  initInputProps: z.infer<T>,
+  compositionName: string
 }
 
 export const Playground = <T extends z.ZodObject<any>>({
   schema,
   composition,
   config,
-  initInputProps
+  initInputProps,
+  compositionName
 }: PlaygroundProps<T>) => {
   const [inputProps, setInputProps] = useState<typeof initInputProps>(initInputProps)
   const input = useDeferredValue(inputProps)
+
   return <Card className="bg-accent">
-    <VideoPlayground
-      Composition={composition}
-      inputPropsSchema={schema}
-      inputProps={input}
-      fps={config.fps}
-      durationInFrames={config.durationInFrames}
-      compositionHeight={config.height}
-      compositionWidth={config.width}
-    />
+    <CardHeader>
+      <CardTitle>
+        {compositionName}
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <VideoPlayground
+        Composition={composition}
+        inputPropsSchema={schema}
+        inputProps={input}
+        fps={config.fps}
+        compositionId={compositionName}
+        compositionHeight={config.height}
+        compositionWidth={config.width}
+        calculateMetadata={config.calculateMetadata}
+      />
+    </CardContent>
     <CardFooter>
-      <FormGeneratorCTA serverAction={renderVideoAction} onChange={setInputProps} schema={schema} defaultValues={initInputProps} />
+      <FormGeneratorCTA
+        serverAction={renderVideoAction.bind(null, compositionName)}
+        onChange={setInputProps}
+        pendingSlot={<span className="text-xs">It can take from 30 seconds to a minute.</span>}
+        schema={schema}
+        defaultValues={input} />
     </CardFooter>
   </Card>
 }

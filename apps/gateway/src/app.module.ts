@@ -19,6 +19,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
 import { RendererModule } from './renderer/renderer.module';
 import { StorageModule } from './storage/storage.module';
 import { VoiceModule } from './voice/voice.module';
+import { LlmModule } from './llm/llm.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { VoiceModule } from './voice/voice.module';
     VoiceModule,
     AttachmentsModule,
     StorageModule,
+    LlmModule,
   ],
   controllers: [AppController],
   // providers: [AppService, JwtStrategy],

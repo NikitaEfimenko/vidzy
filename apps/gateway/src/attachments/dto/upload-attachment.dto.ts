@@ -5,9 +5,6 @@ export class UploadAttachmentDto {
   @IsUUID()
   userId: string;
 
-  @IsUUID()
-  clientId: string;
-
   @IsEnum(fileTypeEnum)
   fileType: typeof fileTypeEnum.enumValues[number];
 

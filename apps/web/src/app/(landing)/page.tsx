@@ -55,11 +55,18 @@ export default async function HomePage() {
         </p>
 
         <div className="flex flex-wrap gap-4">
-          <Link href="/dashboard">
-            <Button size="lg">
+          {!session?.user ? <SignInProcat
+            actionSlot={
+              <Button size="lg" className="flex items-center gap-2">
+                <LogInIcon size={18} />
+                Get Started
+              </Button>
+            }
+          /> : <Link href="/renderer">
+            <Button size="lg" className="flex items-center gap-2">
               Get Started
             </Button>
-          </Link>
+          </Link>}
           <a target='_blank' href="https://t.me/saas_prokat_bot">
             <Button
               size="lg"
@@ -98,7 +105,7 @@ export default async function HomePage() {
                   Login with Procat
                 </Button>
               }
-            /> : <Link href="/dashboard">
+            /> : <Link href="/renderer">
               <Button variant="secondary" className="flex items-center gap-2">
                 <MdDashboard size={18} />
                 Dashboard

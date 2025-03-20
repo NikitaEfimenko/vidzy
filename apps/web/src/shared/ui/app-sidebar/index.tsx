@@ -10,14 +10,16 @@ import {
   TextIcon,
   Users2Icon,
   Video,
-  LayoutDashboard
+  LayoutDashboard,
+  VideoIcon,
+  HandMetalIcon,
+  LayoutDashboardIcon
 } from "lucide-react"
 import * as React from "react"
 
 import { NavMain } from "@/shared/ui/app-sidebar/nav-main"
 import { NavUser } from "@/shared/ui/app-sidebar/nav-user"
 
-import { Button } from "@/shared/ui/button"
 import {
   Sidebar,
   SidebarContent,
@@ -29,8 +31,7 @@ import {
 } from "@/shared/ui/sidebar"
 import Link from "next/link"
 import { Badge } from "../badge"
-import { MdDashboard } from "react-icons/md"
-import { FaDashcube } from "react-icons/fa"
+// import { ThemeChoise } from "@/features/theme-switcher"
 
 const data = {
   user: {
@@ -39,24 +40,30 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
+    // {
+    //   title: "Visual builder",
+    //   url: "/visual-renderer",
+    //   icon: LayoutDashboardIcon,
+    //   items: []
+    // },
     {
-      title: "Attachments",
+      title: "Manual builder",
+      url: "/renderer",
+      icon: HandMetalIcon,
+      items: []
+    },
+    {
+      title: "Attachments and Tools",
       url: "/attachments",
       icon: FilesIcon,
       items: []
     },
-    {
-      title: "Generator",
-      url: "/renderer",
-      icon: Video,
-      items: []
-    },
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-      items: []
-    },
+    // {
+    //   title: "Dashboard",
+    //   url: "/dashboard",
+    //   icon: LayoutDashboard,
+    //   items: []
+    // },
     // {
     //   title: "Documentation",
     //   url: "/docs/intro",
@@ -118,12 +125,12 @@ export function AppSidebar({ user, pro, ...props }: React.ComponentProps<typeof 
             <SidebarMenuButton size="lg" asChild>
               <Link href='#'>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Cat />
+                  <VideoIcon/>
                 </div>
                 <div className="grid flex-1 text-left text-sm gap-1 leading-tight">
-                  <span className="truncate font-semibold">Procat</span>
+                  <span className="truncate font-semibold">Vidzy</span>
                   <span className="truncate text-xs">
-                    <Badge>
+                    <Badge className="text-xs">
                       Admin
                     </Badge>
                   </span>
@@ -138,6 +145,7 @@ export function AppSidebar({ user, pro, ...props }: React.ComponentProps<typeof 
       </SidebarContent>
       {pro}
       <SidebarFooter>
+        {/* <ThemeChoise/> */}
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

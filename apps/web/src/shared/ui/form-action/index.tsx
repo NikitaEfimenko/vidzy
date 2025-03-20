@@ -15,7 +15,7 @@ type FormActionProps = {
   formSlot: ReactElement
   formControls: ReactElement,
   formProviderComponent?: (bodyContent: ReactNode) => ReactNode
-  title: string,
+  title: string | ReactElement,
   description: string
 }
 export const FormAction = ({
@@ -36,7 +36,7 @@ export const FormAction = ({
           <DialogTitle className="text-xl">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-lg">
+          <DialogDescription className="text-sm">
             {description}
           </DialogDescription>
         </DialogHeader>

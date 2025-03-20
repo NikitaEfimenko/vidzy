@@ -7,45 +7,35 @@ import { Button } from "@/shared/ui/button"
 import { FilePreview } from "@/shared/ui/file-preview"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/ui/form"
 import { Input } from "@/shared/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { fileTypeEnum } from "@vidzy/database"
 import { FC, ReactNode, useEffect, useRef, useState } from "react"
 import { useFormState, useFormStatus } from "react-dom"
 import { useForm, useFormContext } from "react-hook-form"
 import { toast } from "sonner"
+import { generateDataUrl, getFileTypeByExtension } from "@/shared/lib/utils"
 
-function generateDataUrl(file: File, callback: (imageUrl: string) => void) {
-  const reader = new FileReader();
-  reader.onload = () => callback(reader.result as string);
-  reader.readAsDataURL(file);
-}
 
 export const SaaSAttachmentFormBody = () => {
   const form = useFormContext<CreateAttachmentDtoType>()
   const fileInput = useRef<HTMLInputElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [fileType, setFileType] = useState<typeof fileTypeEnum.enumValues[number]>('other');
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) generateDataUrl(file, setDataUrl);
+    if (file) {
+      generateDataUrl(file, setDataUrl);
+      const type = getFileTypeByExtension(file.name);
+      setFileType(type);
+      form.setValue('fileType', type);
+    }
   };
 
+  const watchedValues = form.watch();
   return <>
-    <FormField
-      control={form.control}
-      name="fileType"
-      render={({ field }) => (
-        <FormItem>
-          <FormControl>
-            <Input
-              {...field}
-              type="hidden"
-              placeholder=""
-              value="image"
-            />
-          </FormControl>
-        </FormItem>
-      )}
-    />
     <FormField
       control={form.control}
       name="file"
@@ -53,7 +43,7 @@ export const SaaSAttachmentFormBody = () => {
         return <FormItem>
           <FormLabel>Files</FormLabel>
           <FilePreview
-            fileType={"image"}
+            fileType={watchedValues.fileType ?? "other"}
             fileUrl={dataUrl ?? undefined}
             onClick={() => fileInput.current?.click()}
           />
@@ -64,7 +54,6 @@ export const SaaSAttachmentFormBody = () => {
               type="file"
               placeholder=""
               ref={fileInput}
-              accept="image/*,video/*"
               onChange={(e) => {
                 handleFileChange(e)
                 const file = e.target.files?.[0];
@@ -78,7 +67,29 @@ export const SaaSAttachmentFormBody = () => {
         </FormItem>
       }}
     />
-
+    {!!watchedValues.file && <FormField
+      control={form.control}
+      name="fileType"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>File Type</FormLabel>
+          <FormControl>
+            <Select
+              name="fileType"
+              onValueChange={field.onChange} defaultValue={field.value}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select file type" />
+              </SelectTrigger>
+              <SelectContent>
+                {fileTypeEnum.enumValues.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />}
   </>
 }
 
@@ -88,7 +99,7 @@ export const SaaSAttachmentFormControls = () => {
   const errors = Object.values(form.formState.errors)
 
   return <>
-    <Button size="sm" disabled={pending || errors.length > 0} type="submit">Добавить вложение</Button>
+    <Button disabled={pending || errors.length > 0} type="submit">Add attachment</Button>
   </>
 }
 
@@ -107,7 +118,7 @@ export const SaaSAttachmentFormProvider: FC<SaaSAttachmentFormProviderProps> = (
     mode: "all"
   })
   const formRef = useRef<HTMLFormElement>(null)
-  const serverAction = uploadAttachmentAction.bind(null, defaultValues.clientId, !!defaultValues.isPublic)
+  const serverAction = uploadAttachmentAction.bind(null, !!defaultValues.isPublic)
   const [state, action] = useFormState(serverAction, {
     url: null,
     isSuccess: false

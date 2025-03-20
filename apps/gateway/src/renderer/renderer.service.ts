@@ -7,6 +7,8 @@ import { enableTailwind } from '@remotion/tailwind';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
+import { Readable } from 'stream';
+import { AttachmentsService } from 'src/attachments/attachments.service';
 
 const STUDIO_ENTRYPOINT = path.resolve('../web/src/remotion/index.ts');
 
@@ -14,7 +16,8 @@ const STUDIO_ENTRYPOINT = path.resolve('../web/src/remotion/index.ts');
 export class RenderService {
 
   constructor(
-    private configService: ConfigService
+    private configService: ConfigService,
+    private attachmentsService: AttachmentsService
   ) {}
 
   private readonly logger = new Logger(RenderService.name);
@@ -23,23 +26,53 @@ export class RenderService {
     return { message: 'pong\n' };
   }
 
-  async renderComposition(body: RenderBodyDto): Promise<{ url: string }> {
-    const { compositionId, inputProps } = body;
-    console.log(compositionId, inputProps)
+  async renderComposition(body: RenderBodyDto): Promise<{ url: string | null }> {
+    const { compositionId, inputProps, userId } = body;
     const RENDERER_HOST = this.configService.get<string>('RENDERER_HOST')
+    console.log("Step 1: Bundle the composition")
     // Step 1: Bundle the composition
     const bundled = await this.bundleComposition();
-
     // Step 2: Select the composition
+    console.log("Step 2: Select the composition")
     const composition = await this.selectComposition(bundled, compositionId, inputProps);
 
     // Step 3: Render the media file
-    const suffix = this.generateOutputFileName(composition.id, inputProps?.title);
-    const outputLocation = `public/${suffix}`;
-    await this.renderMediaFile(composition, bundled, outputLocation, inputProps);
+    console.log("Step 3: Render the media file")
+    const filename = this.generateOutputFileName(composition.id, inputProps?.title);
 
+    const { buffer } = await this.renderMediaFile(composition, bundled, undefined, inputProps);
+    console.log("Step 4: After render")
+    if (!buffer) {
+      throw new Error(`Failed to generate video: null buffer`);
+    }
+
+    const multerFile: Express.Multer.File = {
+      fieldname: 'file',
+      originalname: filename,
+      encoding: '7bit',
+      mimetype: "video/mp4",
+      size: buffer.length,
+      buffer: buffer,
+      destination: '',
+      filename: filename,
+      path: '',
+      stream: new Readable({
+        read() {
+          this.push(null); // Завершаем поток
+        },
+      }),
+    };
+
+    const attachment = await this.attachmentsService.upload(multerFile, {
+      fileType: "video",
+      public: false,
+      userId: userId
+    })
+    
     this.logger.log(`Rendered composition ${composition.id}.`);
-    return { url: `${RENDERER_HOST}/public/${suffix}` };
+    return {
+      url: attachment.attachment.at(0)?.fileUrl ?? null
+    }
   }
 
   private async bundleComposition() {
@@ -80,7 +113,7 @@ export class RenderService {
     });
   }
 
-  private async renderMediaFile(composition: any, serveUrl: string, outputLocation: string, inputProps: any) {
+  private async renderMediaFile(composition: any, serveUrl: string, outputLocation: string | undefined, inputProps: any) {
     const NEXT_PUBLIC_WEB_HOST = this.configService.get<string>('NEXT_PUBLIC_WEB_HOST')
     return await renderMedia({
       codec: 'h264',
@@ -102,6 +135,6 @@ export class RenderService {
   }
 
   private generateOutputFileName(compositionId: string, title: string) {
-    return `${compositionId}_${title}_${randomUUID()}.mp4`.toLowerCase();
+    return `renderer_${compositionId}_${randomUUID()}.mp4`.toLowerCase();
   }
 }

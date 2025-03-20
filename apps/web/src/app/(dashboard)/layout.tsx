@@ -1,13 +1,15 @@
 
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@/app/globals.css";
 
 
 import { Providers } from "@/app/providers";
 
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 
+import { Guard } from "@/shared/lib/sdk";
+import { AppSidebar } from "@/shared/ui/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,20 +18,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/ui/breadcrumb";
+import { Button } from "@/shared/ui/button";
 import { Separator } from "@/shared/ui/separator";
 import {
   SidebarInset
 } from "@/shared/ui/sidebar";
-import { AppSidebar } from "@/shared/ui/app-sidebar";
-import { auth } from "../config/auth";
-import { redirect } from "next/navigation";
+import { Toaster } from "@/shared/ui/sonner";
 import UserAvatar from "@/widgets/user-profile/ui";
-import { Toaster } from "@/shared/ui/sonner"
-import { fallbackConfig, Guard } from "@/shared/lib/sdk";
+import { Sparkle } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/shared/ui/button";
-import { MdMoney } from "react-icons/md";
-import { Sparkle, TimerOffIcon } from "lucide-react";
+import { redirect } from "next/navigation";
+import { auth } from "../config/auth";
 
 
 const geistSans = localFont({
@@ -49,22 +48,22 @@ export const metadata: Metadata = {
 };
 
 const expiredFallback = <div className="flex-1 h-full flex items-center justify-center">
-<Link href="/prices">
-  <Button size="lg"><Sparkle />Upgrade subscription</Button>
-</Link>
+  <Link href="/prices">
+    <Button size="lg"><Sparkle />Upgrade subscription</Button>
+  </Link>
 </div>
 
 const notAccessFallback = <div className="flex-1  h-full flex items-center justify-center">
-<Link href="/prices">
-  <Button size="lg"><Sparkle />Get access</Button>
-</Link>
+  <Link href="/prices">
+    <Button size="lg"><Sparkle />Get access</Button>
+  </Link>
 </div>
 
 const sidebarAccessFallback = <Link href='/prices'>
-<Button variant="outline" size="lg" className="w-full">
-  <Sparkle />
-  Upgrade to Pro
-</Button>
+  <Button variant="outline" size="lg" className="w-full">
+    <Sparkle />
+    Upgrade to Pro
+  </Button>
 </Link>
 
 export default async function RootLayout({
@@ -82,36 +81,36 @@ export default async function RootLayout({
     <html suppressHydrationWarning lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SidebarProvider>
-          <AppSidebar
-            user={<UserAvatar />}
-            pro={<Guard level="Базовая подписка Vidzy"
-              noAccessFallback={sidebarAccessFallback}
-              expiredFallback={sidebarAccessFallback}
-            ></Guard>}
-          />
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="#">
-                        Upgrade Your Saas
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>Main</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
-            </header>
-            <Providers>
+        >
+        <Providers>
+          <SidebarProvider>
+            <AppSidebar
+              user={<UserAvatar />}
+              pro={<Guard level="Базовая подписка Vidzy"
+                noAccessFallback={sidebarAccessFallback}
+                expiredFallback={sidebarAccessFallback}
+              ></Guard>}
+            />
+            <SidebarInset>
+              <header className="flex h-16 shrink-0 items-center gap-2">
+                <div className="flex items-center gap-2 px-4">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink href="#">
+                          Vidzy dashboard
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage>Generator</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+              </header>
               <main>
                 <div className="px-4">
                   <Guard level="Базовая подписка Vidzy"
@@ -125,9 +124,9 @@ export default async function RootLayout({
                 </div>
               </main>
               <Toaster />
-            </Providers>
-          </SidebarInset>
-        </SidebarProvider>
+            </SidebarInset>
+          </SidebarProvider>
+        </Providers>
       </body>
     </html>
   );

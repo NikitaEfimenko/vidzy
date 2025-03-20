@@ -1,3 +1,4 @@
+import { fileTypeEnum } from "@vidzy/database";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -5,6 +6,35 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const getFileTypeByExtension = (fileName: string): typeof fileTypeEnum.enumValues[number] => {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'mp3':
+    case 'wav':
+    case 'ogg':
+      return 'music';
+    case 'mp4':
+    case 'avi':
+    case 'mov':
+      return 'video';
+    case 'srt':
+      return 'srt';
+    case 'jpg':
+    case 'jpeg':
+    case 'webp':
+    case 'png':
+    case 'gif':
+      return 'image';
+    default:
+      return 'other';
+  }
+};
+
+export function generateDataUrl(file: File, callback: (imageUrl: string) => void) {
+  const reader = new FileReader();
+  reader.onload = () => callback(reader.result as string);
+  reader.readAsDataURL(file);
+}
 
 export const getInitDataFromUrl = (): string | null => {
   if (typeof window !== "undefined") {

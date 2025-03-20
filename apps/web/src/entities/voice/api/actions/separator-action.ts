@@ -17,9 +17,7 @@ export const separatorAction = async (
 ): Promise<FormState> => {
 
   const formData = Object.fromEntries(data)
-  // const parsed = InstrumentalSeparatorDtoSchema.safeParse(formData)
   const parsed = FileSchema.safeParse(formData['file'])
-  console.log(parsed?.error)
   const session = await auth()
 
   if (!parsed.success) {
@@ -29,9 +27,17 @@ export const separatorAction = async (
       issues: parsed.error.message
     }
   }
+
+  if (!session?.user) return {
+    isSuccess: false,
+    issues: '401',
+    result: null
+  }
+  
   try {
+    data.append('userId', session.user.id)
     const renderHost = process.env?.RENDERER_HOST
-    const res = await fetch(`${renderHost}/voice/separate-instrumental`, {
+    const res = await fetch(`${renderHost}/voice/separate`, {
       method: "POST",
       body: data,
       headers: {
@@ -40,7 +46,7 @@ export const separatorAction = async (
       credentials: "include"
     })
     const resData = await res.json() as Partial<FormState>
-    console.log(resData)
+    // console.log(resData)
     return {
       result: resData ?? null,
       isSuccess: true

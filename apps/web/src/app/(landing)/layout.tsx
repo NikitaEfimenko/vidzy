@@ -1,21 +1,20 @@
 
+import { auth } from "@/app/config/auth";
 import "@/app/globals.css";
+import { AutoAuth } from "@/features/auto-auth/ui";
 import { ThemeChoise } from "@/features/theme-switcher";
+import { Guard } from "@/shared/lib/sdk";
+import { Button } from "@/shared/ui/button";
 import { Toaster } from "@/shared/ui/sonner";
+import UserAvatar from "@/widgets/user-profile/ui";
+import { ProfileDrowpdownMenu } from "@/widgets/user-profile/ui/dropdown";
+import { LoaderCircle } from "lucide-react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
+import { MdDashboard } from "react-icons/md";
 import { Providers } from "../providers";
 import { Threads } from "./_components/squares";
-import Image from "next/image";
-import { AutoAuth } from "@/features/auto-auth/ui";
-import { LoaderCircle } from "lucide-react";
-import UserAvatar from "@/widgets/user-profile/ui";
-import { ProfileDrowpdownMenu } from "@/widgets/user-profile/ui/dropdown";
-import { auth } from "@/app/config/auth";
-import { Guard } from "@/shared/lib/sdk";
-import { Button } from "@/shared/ui/button";
-import { MdDashboard } from "react-icons/md";
 
 
 const geistSans = localFont({
@@ -71,32 +70,29 @@ export default async function RootLayout({
           });
       `}} /> */}
       </head>
-      <Providers>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
-        >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
+      >
+        <Providers>
           <AutoAuth
             loader={<LoaderCircle size={64} className="animate-spin" />}
           />
-
-
-
           <header className="container mx-auto flex items-center justify-between py-4">
 
-            {session?.user ? <ProfileDrowpdownMenu profileSlot={<UserAvatar />} /> : 
+            {session?.user ? <ProfileDrowpdownMenu profileSlot={<UserAvatar />} /> :
               <Link href="/">
-              <div className="flex items-center gap-2">
-                <span className="text-3xl text-primary font-bold leading-relaxed">
-                  Vidzy
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl text-primary font-bold leading-relaxed">
+                    Vidzy
+                  </span>
+                </div>
               </Link>
             }
             <Guard level="Базовая подписка Vidzy"
               expiredFallback={<></>}
               noAccessFallback={<></>}
             >
-              <Link href="/dashboard">
+              <Link href="/renderer">
                 <Button size="sm" variant="default">
                   Dashboard<MdDashboard />
                 </Button>
@@ -114,12 +110,12 @@ export default async function RootLayout({
             </nav>
           </header>
           <main className='container min-h-screen flex flex-col items-center text-start'>
-            <Threads/>
+            <Threads />
             {children}
           </main>
           <Toaster />
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }

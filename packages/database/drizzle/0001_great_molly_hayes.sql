@@ -1,0 +1,1 @@
+ALTER TYPE "file_type" ADD VALUE 'other';

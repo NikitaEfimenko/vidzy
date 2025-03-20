@@ -5,7 +5,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import * as hbs from 'express-handlebars';
-import { getBotToken } from 'nestjs-telegraf';
 
 async function bootstrap() {
   console.log("env in bootstrap", process.env)
@@ -25,8 +24,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', '..', 'public'), { prefix: '/public/' });
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-
 
   const instance = hbs.create({
     extname: 'hbs',
@@ -48,7 +45,6 @@ async function bootstrap() {
       credentials: true,
     }
   );
-
-  await app.listen(3001, '0.0.0.0');
+  await app.listen(process.env.PORT! ?? 3004, '0.0.0.0');
 }
 bootstrap();

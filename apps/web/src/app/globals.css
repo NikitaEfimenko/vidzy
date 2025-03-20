@@ -121,7 +121,6 @@ body {
 }
 
 .captions {
-  margin-top: calc(var(--base-size) * 0.5);
   font-size: calc(var(--base-size) * 1.5);
   font-weight: 600;
 }

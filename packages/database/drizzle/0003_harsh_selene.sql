@@ -1,0 +1,1 @@
+ALTER TABLE "attachments" ALTER COLUMN "script" DROP NOT NULL;

@@ -4,16 +4,38 @@ import { Button } from "@/shared/ui/button"
 import * as Generator from "./index"
 import { FormAction } from "@/shared/ui/form-action"
 import { Settings2Icon } from "lucide-react"
-import { memo } from "react"
+import { memo, ReactElement } from "react"
+import { Separator } from "@/shared/ui/separator"
 
-export const FormGeneratorCTA = memo(({ schema, onResult, serverAction, defaultValues, onChange }: Generator.GeneratorMainProps & { defaultValues: any, serverAction: (prevState: any, formData: FormData) => any | Promise<any>, onChange: (values: Record<any, any>) => void, onResult?: (v: any) => void }) => {
+type GeneratorProps = {
+  ctaSlot?: ReactElement,
+  defaultValues: any,
+  serverAction: (prevState: any, formData: FormData) => any | Promise<any>,
+  onChange: (values: Record<any, any>) => void,
+  onResult?: (v: any) => void,
+  formStateSlot?: ReactElement,
+  docsSlot?: ReactElement,
+} & Generator.GeneratorMainProps
+
+export const FormGeneratorCTA = memo(({ docsSlot, pendingSlot, ctaSlot, formStateSlot, schema, onResult, serverAction, defaultValues, onChange }: GeneratorProps) => {
   return <FormAction
-    title="Форма"
-    description="Форма"
-    ctaSlot={<Button size="sm" className="py-3 mt-3"><Settings2Icon /></Button>}
-    formSlot={<Generator.FormGeneratorBody schema={schema}></Generator.FormGeneratorBody>}
-    formControls={
-      <Generator.FormGeneratorControls schema={schema}></Generator.FormGeneratorControls>
+    title="Form"
+    description="Form generator"
+    ctaSlot={ctaSlot ?? <Button size="sm" className="py-3 mt-3"><Settings2Icon />Edit scene</Button>}
+    formSlot={<div className="max-h-[400px] overflow-auto">
+      <div className="flex items-center justify-center w-full">
+        {docsSlot}
+        </div>
+      <Generator.FormGeneratorBody schema={schema}></Generator.FormGeneratorBody>
+      {formStateSlot && <>
+        <Separator className="mt-2 mb-2" />
+        {formStateSlot}
+      </>}
+    </div>
+    }
+    formControls={<div className="flex items-center gap-2">
+      <Generator.FormGeneratorControls pendingSlot={pendingSlot} onChange={onChange} schema={schema}></Generator.FormGeneratorControls>
+    </div>
     }
     formProviderComponent={body => <Generator.FormGeneratorProvider
       schema={schema}

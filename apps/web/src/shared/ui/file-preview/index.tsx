@@ -1,11 +1,12 @@
-import { FileIcon, PlusIcon } from "lucide-react";
+import { FileBoxIcon, FileIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../button";
+import { fileTypeEnum } from "@vidzy/database";
 
 
 type FilePreview = {
   fileUrl?: string,
-  fileType: string,
+  fileType: typeof fileTypeEnum.enumValues[number],
   onClick?: () => void
 }
 
@@ -14,20 +15,19 @@ export const FilePreview = ({
   fileUrl,
   onClick
 }: FilePreview) => {
-  const imagePreview = fileUrl ? <div className="overflow-hidden rounded-md">
+  const imagePreview = fileUrl ? <div className="overflow-hidden w-full rounded-md flex items-center justify-center h-full">
     {fileType === "image" && <Image className="aspect-[3/4] h-fit w-fit object-cover"
-
       fill alt="" src={fileUrl} />}
-    {fileType === "video" && <video className="aspect-[3/4] h-fit w-fit object-cover"
+    {fileType === "video" && <video controls muted loop className="aspect-[3/4] h-fit w-fit object-cover"
       width={300}
       height={400} src={fileUrl} />}
-    {fileType === "srt" && <div><FileIcon size={48} /></div>}
+    {["srt", "other"].some(el => el === fileType) && <FileBoxIcon size="64" />}
     {fileType === "music" && <audio controls>
       <source src={fileUrl} type="audio/mpeg"></source>
     </audio>}
   </div> : (
     <div className="flex w-full items-center justify-center flex-col gap-2">
-      <p className="text-xs text-secondary-foreground"> No image selected</p>
+      <p className="text-xs text-secondary-foreground"> No attachment selected</p>
       <PlusIcon size={32} />Add new
     </div>
   );

@@ -1,16 +1,15 @@
-import {parseSrt, Caption} from '@remotion/captions';
+import { parseSrt, ParseSrtOutput } from '@remotion/captions';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   cancelRender,
   continueRender,
   delayRender,
   useCurrentFrame,
-  useCurrentScale,
-  useVideoConfig,
+  useCurrentScale
 } from "remotion";
 import { ensureFont } from "./ensure-font";
+import { msToFrame } from './utils';
 import { Word } from "./word";
-import { msToFrame } from '../scenes/karaoke';
 
 const useWindowedFrameSubs = (
   src: string,
@@ -18,15 +17,24 @@ const useWindowedFrameSubs = (
 ) => {
   const { windowStart, windowEnd } = options;
 
-  const parsed = useMemo(() => parseSrt({ input: src }), [src]);
-
+  const parsed = useMemo<ParseSrtOutput | null>(() => {
+    let result = null
+    try {
+      result = parseSrt({ input: src })
+    } catch {
+      result = null
+    }
+    return result
+  }, [src]);
   return useMemo(() => {
-    return parsed.captions.filter(({ startMs, endMs }) => {
-      return msToFrame(startMs) >= windowStart && msToFrame(endMs) <= windowEnd;
+    if (!parsed) {
+      return []
+    }
+    return parsed?.captions.filter(({ startMs, endMs }) => {
+      return msToFrame(startMs) <= windowEnd
     });
-  }, [parsed.captions, windowEnd, windowStart]);
+  }, [parsed?.captions, windowEnd, windowStart]);
 }; 
-
 
 export const PaginatedSubtitles: React.FC<{
   readonly subtitles: string;
@@ -41,11 +49,11 @@ export const PaginatedSubtitles: React.FC<{
   startFrame,
   endFrame,
   subtitles,
-  linesPerPage,
-  subtitlesTextColor: transcriptionColor,
-  subtitlesZoomMeasurerSize,
-  subtitlesLineHeight,
-  onlyDisplayCurrentSentence,
+  linesPerPage = 1,
+  subtitlesTextColor: transcriptionColor = "rgba(255, 255, 255, 1)",
+  subtitlesLineHeight = 120,
+  subtitlesZoomMeasurerSize = 1,
+  onlyDisplayCurrentSentence = true,
 }) => {
   const frame = useCurrentFrame();
   const windowRef = useRef<HTMLDivElement>(null);
@@ -57,19 +65,16 @@ export const PaginatedSubtitles: React.FC<{
     windowStart: startFrame,
     windowEnd: endFrame,
   });
-
   const currentScale = useCurrentScale();
 
   const [lineOffset, setLineOffset] = useState(0);
 
   const currentAndFollowingSentences = useMemo(() => {
-    // If we don't want to only display the current sentence, return all the words
     if (!onlyDisplayCurrentSentence) return windowedFrameSubs;
 
     const indexOfCurrentSentence =
       windowedFrameSubs.findLastIndex((w, i) => {
         const nextWord = windowedFrameSubs[i + 1];
-
         return (
           nextWord &&
           (w.text.endsWith("?") ||
@@ -81,7 +86,6 @@ export const PaginatedSubtitles: React.FC<{
 
     return windowedFrameSubs.slice(indexOfCurrentSentence);
   }, [frame, onlyDisplayCurrentSentence, windowedFrameSubs]);
-
 
 
   useEffect(() => {
@@ -116,17 +120,17 @@ export const PaginatedSubtitles: React.FC<{
       });
   }, [fontHandle, fontLoaded]);
 
-
   const currentFrameSentences = currentAndFollowingSentences.filter((word) => {
-    return msToFrame(word.startMs) < frame;
+    return msToFrame(word.startMs) <= frame;
   });
+
 
   return (
     <div
       style={{
         position: "relative",
         overflow: "hidden",
-        paddingBottom: "20px",
+        height: `${linesPerPage * subtitlesLineHeight}px`,
       }}
     >
       <div
@@ -134,6 +138,7 @@ export const PaginatedSubtitles: React.FC<{
         style={{
           transform: `translateY(-${lineOffset * subtitlesLineHeight}px)`,
         }}
+        
       >
         {currentFrameSentences.map((item) => (
           <span key={item.startMs + item.endMs} id={String(item.startMs + item.endMs)}>

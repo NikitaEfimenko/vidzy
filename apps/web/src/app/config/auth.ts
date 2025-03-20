@@ -1,6 +1,9 @@
 import NextAuth from "next-auth"
-import { Procat } from "@/shared/lib/sdk"
+import { Procat } from "@/shared/lib/sdk/procat-auth-provider"
 import { instance } from "@/shared/lib/sdk/api"
+import { db } from "./db"
+import { users } from "@vidzy/database"
+import { eq } from "drizzle-orm"
 
 const PROCAT_HOST = "https://id.procat-saas.online"
 const PROCAT_TEST_HOST = "http://localhost:3001"
@@ -24,6 +27,20 @@ const conf = NextAuth({
       const now = Math.floor(Date.now() / 1000);
       if (profile) {
         token.user = profile
+        // add user in db
+        const existingUser = await db.select().from(users).where(eq(users.username, profile.username as string)).limit(1)
+        if (existingUser.length === 0) {
+          await db.insert(users).values({
+            "image": profile.image! as string,
+            "username": profile.username! as string
+          });
+        } else {
+          token.user = {
+            ...profile,
+            ...existingUser.at(0)
+          };
+        }
+
       }
       if (account) {
         token.accessToken = account.access_token;
@@ -46,13 +63,18 @@ const conf = NextAuth({
         instance.injectToken(token)
         let userProfile = {}
         try {
+          const localProfile = await db.select().from(users).where(eq(users.username, user.id as string)).limit(1)
           userProfile = await instance.fetchProfile()
+          userProfile = {
+            ...userProfile,
+            ...localProfile.at(0)
+          }
         }
         catch {
           userProfile = {}
         }
         // @ts-ignore
-        session.user = { ...token.user, ...(userProfile ?? {}), ...session.user, accessToken: token.accessToken, userId: session.userId }
+        session.user = { ...token.user, ...(userProfile ?? {}), ...session.user, accessToken: token.accessToken, userId: token.user.id! }
         session.token = token
       }
       return session

@@ -20,7 +20,6 @@ const config: Config = {
 			}
 		},
 		extend: {
-
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
