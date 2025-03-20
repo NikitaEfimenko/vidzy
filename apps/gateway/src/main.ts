@@ -45,6 +45,6 @@ async function bootstrap() {
       credentials: true,
     }
   );
-  await app.listen(process.env.PORT! ?? 3004, '0.0.0.0');
+  await app.listen(process.env.NEST_PORT! ?? 3004, '0.0.0.0');
 }
 bootstrap();
