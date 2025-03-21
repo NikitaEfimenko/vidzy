@@ -7,7 +7,7 @@ import { auth } from '../config/auth';
 import { GlitchText } from './_components/glitch';
 
 import { Badge } from '@/shared/ui/badge';
-import BounceCards from './_components/bounding-cards';
+// import BounceCards from './_components/bounding-cards';
 import Link from 'next/link';
 import { SignInProcat } from '@/features/sign-in';
 import { MdDashboard } from 'react-icons/md';
@@ -82,7 +82,7 @@ export default async function HomePage() {
       <section className='flex flex-col items-center justify-center'>
         {/* Right Column - Cards */}
         {/* <Threads/> */}
-        <BounceCards
+        {/* <BounceCards
           className="custom-bounceCards"
           images={videos}
           containerWidth={500}
@@ -92,7 +92,7 @@ export default async function HomePage() {
           easeType="elastic.out(1, 0.5)"
           transformStyles={transformStyles}
           enableHover={false}
-        />
+        /> */}
         <div className="space-y-6 z-10">
           {/* Discord Card */}
           <Card className="p-6 shadow-2xl shadow-primary items-center">
