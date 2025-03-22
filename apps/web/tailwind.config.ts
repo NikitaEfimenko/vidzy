@@ -10,6 +10,7 @@ const config: Config = {
 		"./src/entities/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/shared/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/remotion/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/processes/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
 		container: {

@@ -14,7 +14,13 @@ import {
 } from "@/shared/ui/hover-card";
 import { FaLaugh } from "react-icons/fa";
 
-export const GenerateSpeechCTA = React.memo(() => {
+type GenerateSpeechCTAProps = {
+  formOnly?: boolean
+}
+
+export const GenerateSpeechCTA = React.memo(({
+  formOnly = false
+}: GenerateSpeechCTAProps) => {
   const [inputProps, setInputProps] = useState<any>({})
   const input = useDeferredValue(inputProps)
 
@@ -52,6 +58,6 @@ export const GenerateSpeechCTA = React.memo(() => {
       </HoverCard>
     }
     pendingSlot={<span className="text-xs">May take a couple of minutes</span>}
-    ctaSlot={<Button size="sm"><PlusSquareIcon />Generate Text-to-Speech</Button>}
+    ctaSlot={formOnly ? undefined : <Button size="sm"><PlusSquareIcon />Generate Text-to-Speech</Button>}
   />
 })

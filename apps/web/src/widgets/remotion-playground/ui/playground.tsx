@@ -26,12 +26,12 @@ export const Playground = <T extends z.ZodObject<any>>({
   const input = useDeferredValue(inputProps)
 
   return <Card className="bg-accent">
-    <CardHeader>
+    <CardHeader className="py-2">
       <CardTitle>
         {compositionName}
       </CardTitle>
     </CardHeader>
-    <CardContent>
+    <CardContent className="py-2">
       <VideoPlayground
         Composition={composition}
         inputPropsSchema={schema}

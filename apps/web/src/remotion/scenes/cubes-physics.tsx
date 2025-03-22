@@ -42,7 +42,7 @@ export const CubesComposition = (props: CubesSceneSchemaProps) => {
 };
 
 
-export const compositionName = "PhysicsPreviewScene"
+export const compositionName = "PhysicsPreviewScene"  as const
 export const FPS = 30
 
 export const initInputProps = {

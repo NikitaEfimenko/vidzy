@@ -111,8 +111,7 @@ export default async function RootLayout({
                   </Breadcrumb>
                 </div>
               </header>
-              <main>
-                <div className="px-4">
+              <main className="w-full h-full">
                   <Guard level="Базовая подписка Vidzy"
                     expiredFallback={expiredFallback}
                     noAccessFallback={notAccessFallback}
@@ -121,7 +120,6 @@ export default async function RootLayout({
                       {children}
                     </>
                   </Guard>
-                </div>
               </main>
               <Toaster />
             </SidebarInset>

@@ -12,7 +12,9 @@ import { cn } from "@/shared/lib/utils";
 
 type ProviderType = 'ollama' | 'yandex'
 
-export const RequestLLMChatResponseCTA = () => {
+export const RequestLLMChatResponseCTA = ({
+  formOnly = false
+}) => {
   const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
     api: `${process.env.NEXT_PUBLIC_RENDERER_HOST}/llm/chat`,
   });
@@ -22,7 +24,7 @@ export const RequestLLMChatResponseCTA = () => {
   return <FormAction
     title="LLM chat"
     description="LLM chat"
-    ctaSlot={<Button size="sm"><MessageCircleIcon></MessageCircleIcon>Chat with LLM</Button>}
+    ctaSlot={formOnly ? undefined : <Button size="sm"><MessageCircleIcon></MessageCircleIcon>Chat with LLM</Button>}
     formSlot={
       <div className="flex flex-col w-full max-w-md  mx-auto stretch gap-3">
         <Card className="bg-muted-foreground border-0 max-h-96 overflow-auto flex flex-col gap-4">

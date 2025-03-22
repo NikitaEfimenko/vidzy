@@ -21,7 +21,7 @@ export const FormGeneratorCTA = memo(({ docsSlot, pendingSlot, ctaSlot, formStat
   return <FormAction
     title="Form"
     description="Form generator"
-    ctaSlot={ctaSlot ?? <Button size="sm" className="py-3 mt-3"><Settings2Icon />Edit scene</Button>}
+    ctaSlot={ctaSlot}
     formSlot={<div className="max-h-[400px] overflow-auto">
       <div className="flex items-center justify-center w-full">
         {docsSlot}

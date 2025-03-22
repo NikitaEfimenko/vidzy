@@ -10,7 +10,11 @@ const initValues = {
   file: null
 }
 
-export const GenerateTranscribeCTA = React.memo(() => {
+export const GenerateTranscribeCTA = React.memo(({
+  formOnly = false
+}: {
+  formOnly?: boolean
+}) => {
 
   const [inputProps, setInputProps] = useState<any>(initValues)
   const [result, setResult] = useState<any>({})
@@ -22,7 +26,7 @@ export const GenerateTranscribeCTA = React.memo(() => {
     schema={TranscribeDtoSchema}
     defaultValues={initValues}
     pendingSlot={<span className="text-xs">It may take about 30 seconds.</span>}
-    ctaSlot={<Button size="sm"><PlusSquareIcon/>Generate Transcribe</Button>}
+    ctaSlot={formOnly ? undefined : <Button size="sm"><PlusSquareIcon/>Generate Transcribe</Button>}
   />
 
 })

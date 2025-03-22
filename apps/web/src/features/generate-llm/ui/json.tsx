@@ -22,9 +22,11 @@ import {
 
 
 export const RequestLLMJsonResponseCTA = ({
-  schema
+  schema,
+  formOnly = false
 }: {
-  schema: Record<any, any>
+  schema: Record<any, any>,
+  formOnly?: boolean
 }) => {
   const { object, submit, isLoading, stop } = useObject({
     api: `${process.env.NEXT_PUBLIC_RENDERER_HOST}/llm/generate-json`,
@@ -40,7 +42,7 @@ export const RequestLLMJsonResponseCTA = ({
   return <FormAction
     title="JSON generation"
     description="LLM JSON generation"
-    ctaSlot={<Button size="sm"><FileJsonIcon />Generate JSON</Button>}
+    ctaSlot={formOnly ? undefined :<Button size="sm"><FileJsonIcon />Generate JSON</Button>}
     formSlot={<div className='flex flex-col gap-2'>
       <Tabs defaultValue="account" className="w-full">
         <TabsList className="flex items-center gap-2">

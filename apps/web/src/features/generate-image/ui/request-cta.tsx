@@ -12,10 +12,12 @@ import { AIImagePreview } from "./ai-image-preview";
 import { MdPreview } from "react-icons/md";
 
 const ResultResponse = z.object({
-  requestId: z.string()
+  requestId: z.string(),
 })
 
-export const RequestAIImageCTA = () => {
+export const RequestAIImageCTA = ({
+  formOnly = false
+}) => {
   const [inputProps, setInputProps] = useState<any>({})
   const [requestId, setRequestId] = useState<string | null>(null)
   return <FormGeneratorCTA
@@ -45,7 +47,7 @@ export const RequestAIImageCTA = () => {
     </>
     }
     ctaSlot={
-      <Button size="sm"><FaMagic />Generate Image</Button>
+      formOnly ? undefined : <Button size="sm"><FaMagic />Generate Image</Button>
     }
   />
 }

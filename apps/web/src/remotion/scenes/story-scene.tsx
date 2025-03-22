@@ -155,7 +155,7 @@ export const StoryComposition = ({
   );
 };
 
-export const compositionName = "StoryScene"
+export const compositionName = "StoryScene"  as const
 
 export const initInputProps = {
   // Audio settings

@@ -155,7 +155,7 @@ export const QuizComposition = ({
 };
 
 
-export const compositionName = "QuizScene"
+export const compositionName = "QuizScene" as const
 
 
 

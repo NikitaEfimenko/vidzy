@@ -214,6 +214,33 @@ export const FormGeneratorProvider = memo(({ onResult, onChange, serverAction, s
   );
 });
 
+
+export const FormNoActionGeneratorProvider = memo(({ onResult, onChange, schema, children, defaultValues }: Omit<FormGeneratorProviderProps<any>, "serverAction">) => {
+  const methods = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: defaultValues,
+    mode: "all"
+  });
+  const { register, trigger, reset, handleSubmit, formState: { errors, isValid }, control, getValues, watch } = methods;
+  const formRef = useRef<HTMLFormElement>(null)
+
+  return (<Form {...methods}>
+    <form
+      onSubmit={async (e) => {
+        await trigger()
+        if (isValid) {
+          formRef.current?.requestSubmit()
+        } else {
+          e.preventDefault()
+        }
+      }}
+    >
+      {children}
+    </form>
+  </Form>
+  );
+});
+
 export const FormGeneratorBody = ({ schema }: GeneratorMainProps) => {
   const form = useFormContext<z.infer<typeof schema>>()
   const fields = Object.entries(schema.shape).map(([key, subSchema]) =>

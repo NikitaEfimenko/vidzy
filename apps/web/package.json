@@ -50,6 +50,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/three": "^0.170.0",
     "@vidzy/database": "workspace:*",
+    "@xyflow/react": "^12.4.4",
     "Inter": "link:@remotion/google-fonts/Inter",
     "ai": "^4.1.61",
     "class-variance-authority": "^0.7.0",
@@ -87,7 +88,8 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.170.0",
     "vaul": "^1.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@remotion/captions": "^4.0.234",

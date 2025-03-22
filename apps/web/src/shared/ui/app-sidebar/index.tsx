@@ -40,16 +40,10 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
-    // {
-    //   title: "Visual builder",
-    //   url: "/visual-renderer",
-    //   icon: LayoutDashboardIcon,
-    //   items: []
-    // },
     {
-      title: "Manual builder",
-      url: "/renderer",
-      icon: HandMetalIcon,
+      title: "Visual builder (beta)",
+      url: "/visual-renderer",
+      icon: LayoutDashboardIcon,
       items: []
     },
     {
