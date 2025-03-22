@@ -47,6 +47,12 @@ const data = {
       items: []
     },
     {
+      title: "Manual builder (legacy)",
+      url: "/renderer",
+      icon: HandMetalIcon,
+      items: []
+    },
+    {
       title: "Attachments and Tools",
       url: "/attachments",
       icon: FilesIcon,
