@@ -41,7 +41,7 @@ export const FormAction = ({
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="w-full">
         {formSlot}
       </CardContent>
       <CardFooter className="mt-4">
@@ -66,7 +66,9 @@ export const FormAction = ({
             {description}
           </DialogDescription>
         </DialogHeader>
+        <div className="w-full">
           {formSlot}
+        </div>
         <DialogFooter className="mt-4">
           {formControls}
         </DialogFooter></div>

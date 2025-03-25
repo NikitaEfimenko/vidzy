@@ -1,4 +1,4 @@
-import { unstable_noStore as noStore } from "next/cache";
+
 import { cookies } from "next/headers"
 import { WorkflowPanel } from "./panel";
 import { ReactElement, ReactNode } from "react";
@@ -8,13 +8,12 @@ import { ReactFlowProvider } from "@xyflow/react";
 export default async function EditorLayout({
   nav,
   editor,
-  tools
+  tools,
 }: {
   nav: ReactElement,
   editor: ReactElement,
   tools: ReactElement
 }) {
-  noStore();
 
   const layout = cookies().get("react-resizable-panels-workflows:layout")
   const collapsed = cookies().get("react-resizable-panels-workflows:collapsed")

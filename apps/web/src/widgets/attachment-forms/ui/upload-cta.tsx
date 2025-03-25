@@ -8,17 +8,19 @@ import { MdAttachment } from "react-icons/md"
 type AttachmentUploadCTAProps = {
   userId?: string
   isPublic?: boolean,
-  ctaSlot?: ReactElement
+  ctaSlot?: ReactElement,
+  disableSlot?: boolean
 }
 
 export const AttachmentUploadCTA = ({
   userId,
   isPublic = true,
-  ctaSlot
+  disableSlot = false,
+  ctaSlot = <Button><MdAttachment /></Button>
 }: AttachmentUploadCTAProps) => <FormAction
     title="Add attachments"
     description="Add attachments for generator"
-    ctaSlot={ctaSlot ?? <Button><MdAttachment /></Button>}
+    ctaSlot={disableSlot ? undefined : ctaSlot}
     formSlot={<UploadForm.SaaSAttachmentFormBody />}
     formControls={<UploadForm.SaaSAttachmentFormControls />}
     formProviderComponent={(body) => <UploadForm.SaaSAttachmentFormProvider 

@@ -13,7 +13,8 @@ import {
   LayoutDashboard,
   VideoIcon,
   HandMetalIcon,
-  LayoutDashboardIcon
+  LayoutDashboardIcon,
+  Workflow
 } from "lucide-react"
 import * as React from "react"
 
@@ -31,6 +32,7 @@ import {
 } from "@/shared/ui/sidebar"
 import Link from "next/link"
 import { Badge } from "../badge"
+import { ThemeChoise } from "@/features/theme-switcher"
 // import { ThemeChoise } from "@/features/theme-switcher"
 
 const data = {
@@ -41,19 +43,19 @@ const data = {
   },
   navMain: [
     {
-      title: "Visual builder (beta)",
-      url: "/visual-renderer",
+      title: "Overview",
+      url: "/renderer",
       icon: LayoutDashboardIcon,
       items: []
     },
     {
-      title: "Manual builder (legacy)",
-      url: "/renderer",
-      icon: HandMetalIcon,
+      title: "Render workflows",
+      url: "/visual-renderer",
+      icon: Workflow,
       items: []
     },
     {
-      title: "Attachments and Tools",
+      title: "Attachments",
       url: "/attachments",
       icon: FilesIcon,
       items: []
@@ -131,7 +133,7 @@ export function AppSidebar({ user, pro, ...props }: React.ComponentProps<typeof 
                   <span className="truncate font-semibold">Vidzy</span>
                   <span className="truncate text-xs">
                     <Badge className="text-xs">
-                      Admin
+                      Dashboard
                     </Badge>
                   </span>
                 </div>
@@ -145,7 +147,7 @@ export function AppSidebar({ user, pro, ...props }: React.ComponentProps<typeof 
       </SidebarContent>
       {pro}
       <SidebarFooter>
-        {/* <ThemeChoise/> */}
+        <ThemeChoise/>
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

@@ -29,6 +29,7 @@ export const CopyItem = ({ textToCopy, className }: CopyBadgeProps) => {
         className="text-xs text-ellipsis cursor-pointer flex items-center gap-1"
         onClick={handleCopy}
         role="button"
+        type="button"
         variant="secondary"
         aria-label="Copy to clipboard"
       >

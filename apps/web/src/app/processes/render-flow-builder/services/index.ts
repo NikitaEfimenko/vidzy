@@ -48,12 +48,11 @@ export const useWorkflowEditor = () => {
   const instance = useReactFlow()
   const [state, setState] = useAtom(workflowAtom)
   const [history, setHistory] = useAtom(historyAtom)
-
+ 
   const selectNode = (id: string) => {
     setState(state => ({ ...state, selectedNode: state.elements.find(el => el.id === id) }))
   }
   const setNodes = (cb: (nds: any) => Node[]) => {
-
     setState(state => ({ ...state, elements: cb(state.elements) }))
   }
   const setEdges = (cb: (nds: any) => Edge[]) => {

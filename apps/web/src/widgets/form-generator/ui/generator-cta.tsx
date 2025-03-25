@@ -11,7 +11,7 @@ type GeneratorProps = {
   ctaSlot?: ReactElement,
   defaultValues: any,
   serverAction: (prevState: any, formData: FormData) => any | Promise<any>,
-  onChange: (values: Record<any, any>) => void,
+  onChange?: (values: Record<any, any>) => void,
   onResult?: (v: any) => void,
   formStateSlot?: ReactElement,
   docsSlot?: ReactElement,

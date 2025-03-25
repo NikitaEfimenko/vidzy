@@ -29,6 +29,7 @@ import { Sparkle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "../config/auth";
+import { ReactElement } from "react";
 
 
 const geistSans = localFont({
@@ -68,20 +69,22 @@ const sidebarAccessFallback = <Link href='/prices'>
 
 export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ slug: string }>,
 }>) {
+
   const session = await auth()
   if (!session?.user) {
     redirect('/')
   }
 
-
   return (
     <html suppressHydrationWarning lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+      >
         <Providers>
           <SidebarProvider>
             <AppSidebar
@@ -93,33 +96,33 @@ export default async function RootLayout({
             />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2">
-                <div className="flex items-center gap-2 px-4">
+                <div className="flex items-center gap-2 px-4 w-full">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <Breadcrumb>
                     <BreadcrumbList>
                       <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink href="#">
+                        <BreadcrumbLink href="/renderer">
                           Vidzy dashboard
                         </BreadcrumbLink>
                       </BreadcrumbItem>
                       <BreadcrumbSeparator className="hidden md:block" />
                       <BreadcrumbItem>
-                        <BreadcrumbPage>Generator</BreadcrumbPage>
+                        <BreadcrumbPage>Render</BreadcrumbPage>
                       </BreadcrumbItem>
                     </BreadcrumbList>
                   </Breadcrumb>
                 </div>
               </header>
               <main className="w-full h-full">
-                  <Guard level="Базовая подписка Vidzy"
-                    expiredFallback={expiredFallback}
-                    noAccessFallback={notAccessFallback}
-                  >
-                    <>
-                      {children}
-                    </>
-                  </Guard>
+                <Guard level="Базовая подписка Vidzy"
+                  expiredFallback={expiredFallback}
+                  noAccessFallback={notAccessFallback}
+                >
+                  <>
+                    {children}
+                  </>
+                </Guard>
               </main>
               <Toaster />
             </SidebarInset>

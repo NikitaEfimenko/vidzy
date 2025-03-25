@@ -182,3 +182,10 @@ body {
   top: calc(var(--base-size) * 7);
   left: calc(var(--base-size) * 0.75);
 }
+
+
+.react-flow__handle {
+  width: 3rem;
+  height: 3rem;
+  border-color: var(--accent);
+}

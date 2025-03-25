@@ -14,15 +14,23 @@ import {
   type OnEdgesChange,
   type OnNodeDrag,
   type OnNodesChange,
+  type PanelPosition,
+  Panel,
   ReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { nodeFactory } from '../config';
 import { useWorkflowEditor } from '../services';
 import { CustomNodeType } from '../types';
 import { edgeTypes, nodeTypes } from './nodes';
+import { SaveWorkflowCTA } from '@/widgets/workflow-forms/ui/update-cta';
+import { RestoreWorkflowCTA } from '@/widgets/workflow-forms/ui/restore-cta';
+import { Card } from '@/shared/ui/card';
+import { Button } from '@/shared/ui/button';
+import { LucideHelpCircle, MapIcon } from 'lucide-react';
+import { MdHelp } from 'react-icons/md';
 
 const fitViewOptions: FitViewOptions = {
   padding: 0.2,
@@ -30,6 +38,7 @@ const fitViewOptions: FitViewOptions = {
  
 const defaultEdgeOptions: DefaultEdgeOptions = {
   animated: true,
+
 };
  
  
@@ -37,10 +46,16 @@ const onNodeDrag: OnNodeDrag = (_, node) => {
   console.log('drag event', node.data);
 };
  
-export const WorkflowPlayground = () => {
+export const WorkflowPlayground = ({
+  workflowId,
+  flowData
+}: {
+  workflowId: string,
+  flowData: Record<string, any>
+}) => {
   const service = useWorkflowEditor()
- 
- 
+
+
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => service.setNodes((nds) => applyNodeChanges(changes, nds)),
     [service],
@@ -54,6 +69,15 @@ export const WorkflowPlayground = () => {
     [service],
   );
 
+  useEffect(() => {
+    if (flowData && flowData.viewport) {
+      const { x = 0, y = 0, zoom = 1 } = flowData.viewport;
+      service.setNodes(cb => flowData?.nodes || []);
+      service.setEdges(cb => flowData?.edges || []);
+      service.flowInstance.setViewport({ x, y, zoom });
+    }
+  }, [flowData])
+
   const onDragOver = (event: any) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = "move"
@@ -65,7 +89,7 @@ export const WorkflowPlayground = () => {
     service.setNodes(nds => nds.concat(nodeFactory({ type, position: service.flowInstance.flowToScreenPosition({ x: event.clientX, y: event.clientY })  }))) 
   }
  
-
+  const [minimap, setMinimap] = useState(false)
   return (
     <ReactFlow
       nodes={service.state.elements}
@@ -85,7 +109,15 @@ export const WorkflowPlayground = () => {
       defaultEdgeOptions={defaultEdgeOptions}
     >
       <Controls />
-      <MiniMap />
+      <Panel position={"top-right"}>
+        <Card className='bg-muted flex items-center gap-2'>
+          <SaveWorkflowCTA workflowId={workflowId} />
+          {/* <RestoreWorkflowCTA/> */}
+          <Button variant="secondary" onClick={() => setMinimap(m => !m)} size="icon"><MapIcon/></Button>
+          <Button variant="secondary"  size="icon"><LucideHelpCircle/></Button>
+        </Card>
+      </Panel>
+      {minimap && <MiniMap />}
       <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
     </ReactFlow>
   );

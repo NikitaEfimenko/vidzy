@@ -29,6 +29,13 @@
       "when": 1742231912143,
       "tag": "0003_harsh_selene",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742844408094,
+      "tag": "0004_lame_omega_sentinel",
+      "breakpoints": true
     }
   ]
 }

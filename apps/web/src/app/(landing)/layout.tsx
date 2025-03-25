@@ -15,6 +15,7 @@ import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 import { Providers } from "../providers";
 import { Threads } from "./_components/squares";
+import Script from "next/script";
 
 
 const geistSans = localFont({
@@ -51,7 +52,7 @@ export default async function RootLayout({
           type="image/<generated>"
           sizes="<generated>"
         />
-        {/* <Script
+        <Script
           id="yandex-metrika"
           strategy="afterInteractive" // Загружается после первой отрисовки страницы
           dangerouslySetInnerHTML={{
@@ -62,13 +63,13 @@ export default async function RootLayout({
           k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
           (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-          ym(99911192, "init", {
+          ym(100558579, "init", {
                 clickmap:true,
                 trackLinks:true,
                 accurateTrackBounce:true,
                 webvisor:true
           });
-      `}} /> */}
+      `}} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}

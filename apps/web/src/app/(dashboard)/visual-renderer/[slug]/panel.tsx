@@ -16,7 +16,7 @@ interface WorkflowPanelProps {
 }
 
 export const WorkflowPanel = ({
-  defaultLayout = [20, 70, 10],
+  defaultLayout = [15, 75, 10],
   defaultCollapsed = false,
   navCollapsedSize,
   navSlot,
@@ -25,11 +25,11 @@ export const WorkflowPanel = ({
 }: WorkflowPanelProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
 
-
   return <TooltipProvider delayDuration={0}>
     <ResizablePanelGroup
       direction="horizontal"
       onLayout={(sizes: number[]) => {
+        console.log(sizes)
         document.cookie = `react-resizable-panels-workflows:layout=${JSON.stringify(
           sizes
         )}`
@@ -39,7 +39,7 @@ export const WorkflowPanel = ({
       <ResizablePanel
         defaultSize={defaultLayout[0]}
         collapsedSize={navCollapsedSize}
-        minSize={20}
+        minSize={15}
         onCollapse={() => {
           setIsCollapsed(true)
           document.cookie = `react-resizable-panels-workflows:collapsed=${JSON.stringify(true)}`
@@ -57,7 +57,7 @@ export const WorkflowPanel = ({
         {editorSlot}
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel minSize={15} defaultSize={defaultLayout[2]}>
+      <ResizablePanel minSize={10} defaultSize={defaultLayout[2]}>
         {toolsSlot}
       </ResizablePanel>
     </ResizablePanelGroup>

@@ -7,6 +7,7 @@ import {
   FileJson2Icon,
   ImageIcon,
   MapIcon,
+  Sticker,
   SubtitlesIcon,
   VideoIcon,
   Workflow
@@ -23,7 +24,7 @@ export const NodeIcon = ({
 }: { nodeType: CustomNodeType } & ComponentPropsWithRef<typeof Activity>) => {
   const Icon = useMemo(() => {
     switch (nodeType) {
-      case "annotation": return BookMarkedIcon
+      case "annotation": return Sticker
       case "audio-injector": return AudioLinesIcon
       case "file-injector": return FileIcon
       case "image-injector": return ImageIcon

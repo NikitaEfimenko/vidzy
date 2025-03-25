@@ -20,6 +20,7 @@ import { RendererModule } from './renderer/renderer.module';
 import { StorageModule } from './storage/storage.module';
 import { VoiceModule } from './voice/voice.module';
 import { LlmModule } from './llm/llm.module';
+import { WorkflowsModule } from './workflows/workflows.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { LlmModule } from './llm/llm.module';
     AttachmentsModule,
     StorageModule,
     LlmModule,
+    WorkflowsModule,
   ],
   controllers: [AppController],
   // providers: [AppService, JwtStrategy],
