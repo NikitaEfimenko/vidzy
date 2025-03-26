@@ -38,7 +38,7 @@ const fitViewOptions: FitViewOptions = {
  
 const defaultEdgeOptions: DefaultEdgeOptions = {
   animated: true,
-
+  type: "mapper"
 };
  
  
@@ -64,8 +64,18 @@ export const WorkflowPlayground = ({
     (changes) => service.setEdges((eds) => applyEdgeChanges(changes, eds)),
     [service],
   );
+
   const onConnect: OnConnect = useCallback(
-    (connection) => service.setEdges((eds) => addEdge({...connection}, eds)),
+    (connection) => {
+      const newEdge = {
+        ...connection,
+        data: {
+          ...connection,
+          key: crypto.randomUUID(), // Генерация уникального UUID
+        },
+      };
+      service.setEdges((eds) => addEdge(newEdge, eds));
+    },
     [service],
   );
 
@@ -77,6 +87,8 @@ export const WorkflowPlayground = ({
       service.flowInstance.setViewport({ x, y, zoom });
     }
   }, [flowData])
+
+  console.log(flowData)
 
   const onDragOver = (event: any) => {
     event.preventDefault()

@@ -22,7 +22,6 @@ export const SaveWorkflowCTA = React.memo(({
     return () => clearInterval(intervalId); // Очистка интервала при размонтировании
   }, [service.flowInstance]);
 
-  console.log(flowData)
 
   return <UpdateForm.UpdateWorkflowFormProvider workflowId={workflowId} defaultValues={{
     flowData

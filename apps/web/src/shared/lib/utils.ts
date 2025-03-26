@@ -1,6 +1,9 @@
 import { fileTypeEnum } from "@vidzy/database";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { z } from "zod";
+export { zodToJsonSchema } from "zod-to-json-schema";
+export { jsonSchemaToZod } from "json-schema-to-zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -73,3 +76,51 @@ export const extendWithInitData = (url: string): string => {
   return url;
 };
 
+
+export function objectToZodSchema(obj: Record<string, any>): z.ZodObject<any> {
+  const schemaShape: Record<string, z.ZodTypeAny> = {};
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+
+      // Преобразуем значение в строку для описания
+      const description = `Example: ${value.toString()}`;
+
+      // Определяем тип значения и создаем соответствующую Zod-схему
+      if (typeof value === 'string') {
+        schemaShape[key] = z.string().describe(description);
+      } else if (typeof value === 'number') {
+        schemaShape[key] = z.number().describe(description);
+      } else if (typeof value === 'boolean') {
+        schemaShape[key] = z.boolean().describe(description);
+      } else if (Array.isArray(value)) {
+        // Если значение — массив, проверяем тип его элементов
+        if (value.length > 0) {
+          const firstElement = value[0];
+          if (typeof firstElement === 'string') {
+            schemaShape[key] = z.array(z.string()).describe(description);
+          } else if (typeof firstElement === 'number') {
+            schemaShape[key] = z.array(z.number()).describe(description);
+          } else if (typeof firstElement === 'boolean') {
+            schemaShape[key] = z.array(z.boolean()).describe(description);
+          } else {
+            // Если тип элемента массива неизвестен, используем z.any()
+            schemaShape[key] = z.array(z.any()).describe(description);
+          }
+        } else {
+          // Если массив пустой, используем z.array(z.any())
+          schemaShape[key] = z.array(z.any()).describe(description);
+        }
+      } else if (value && typeof value === 'object') {
+        // Если значение — объект, рекурсивно создаем схему для него
+        schemaShape[key] = objectToZodSchema(value).describe(description);
+      } else {
+        // Если тип неизвестен, используем z.any()
+        schemaShape[key] = z.any().describe(description);
+      }
+    }
+  }
+
+  return z.object(schemaShape);
+}

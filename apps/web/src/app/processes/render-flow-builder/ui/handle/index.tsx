@@ -10,7 +10,7 @@ export const WorkflowHandle = (props: WorkflowHandleProps) => {
 
   return <Handle
     {...props}
-    className="w-4 h-4 bg-transparent border-primary border-2"
+    className="!w-4 !h-4 !bg-transparent !border-primary !border-2"
     isValidConnection={(e) => {
       const sourceNode = service.state.elements.find(node => node.id === e.source)
       const sourceFromHandle = service.state.edges.filter(edge => edge.source === e.source).length

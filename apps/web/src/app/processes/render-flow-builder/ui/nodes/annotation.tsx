@@ -12,19 +12,19 @@ type AnnotationNodeType = Node<{
 
 const DEFAULT_TEXT = "Lorem ipsum dolor sit amet...";
 
-export const AnnotationNode = memo(({ 
-  id, 
-  data, 
+export const AnnotationNode = memo(({
+  id,
+  data,
   selected,
-  width: initialWidth = 400,
+  width: initialWidth = 300,
   height: initialHeight = 400
 }: NodeProps<AnnotationNodeType>) => {
   const { flowInstance } = useWorkflowEditor();
   const [isEditing, setIsEditing] = useState(false);
   const [localTitle, setLocalTitle] = useState(data.title || DEFAULT_TEXT);
   const [dimensions, setDimensions] = useState({
-    width: initialWidth,
-    height: initialHeight
+    width: initialWidth ?? 300,
+    height: initialHeight ?? 300
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -43,7 +43,6 @@ export const AnnotationNode = memo(({
 
   const saveChanges = useCallback(() => {
     const newTitle = localTitle.trim() || DEFAULT_TEXT;
-    console.log(newTitle)
     flowInstance.updateNode(id, {
       data: {
         ...data,
@@ -72,12 +71,11 @@ export const AnnotationNode = memo(({
         ...data,
       },
       width,
-      height
+      height,
     });
   }, [id, data, flowInstance.updateNode]);
-
   return (
-    <div 
+    <div
       className={`
         relative p-4 rounded-lg shadow-md
         ${selected ? 'ring-2 ring-blue-400' : ''}
@@ -85,20 +83,20 @@ export const AnnotationNode = memo(({
         transition-colors duration-200
         flex items-center justify-center
       `}
-      style={{ 
-        width: dimensions.width, 
-        height: dimensions.height 
+      style={{
+        width: dimensions.width,
+        height: dimensions.height
       }}
       onDoubleClick={() => setIsEditing(true)}
     >
-      <NodeResizer 
+      <NodeResizer
         minWidth={150}
-        minHeight={100}
+        minHeight={150}
         onResize={(_, { width, height }) => handleResize(width, height)}
         isVisible={selected}
         keepAspectRatio={false}
       />
-      
+
       {isEditing ? (
         <textarea
           ref={textareaRef}
@@ -116,7 +114,7 @@ export const AnnotationNode = memo(({
           placeholder="Введите текст..."
         />
       ) : (
-        <div 
+        <div
           className={`
             w-full h-full overflow-auto
             whitespace-pre-wrap break-words

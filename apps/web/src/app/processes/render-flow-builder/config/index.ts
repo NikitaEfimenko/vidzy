@@ -37,20 +37,24 @@ export const nodeContextSchema = {
 
 } satisfies Record<CustomNodeType, Content>
 
-export const nodeFactory = (node?: Partial<TNode>) => ({
-  data: {
-    completed: false,
-    current: false,
-    meta: {
+export const nodeFactory = (node?: Partial<TNode>) => {
+  const id = crypto.randomBytes(20).toString('hex')
+  return {
+    data: {
+      completed: false,
+      current: false,
+      meta: {
+      },
+      title: nodeContextSchema[(node?.type as CustomNodeType) || 'action' as CustomNodeType].title,
+      type: node?.type || ('action' as const),
     },
-    title: nodeContextSchema[(node?.type as CustomNodeType) || 'action' as CustomNodeType].title,
+    id: id,
+    position: {
+      x: node?.position?.x || 0,
+      y: node?.position?.y || 0
+    },
     type: node?.type || ('action' as const),
-  },
-  id: crypto.randomBytes(20).toString('hex'),
-  position: {
-    x: node?.position?.x || 0,
-    y: node?.position?.y || 0
-  },
-  type: node?.type || ('action' as const),
-  edges: []
-})
+    ...(node?.type as CustomNodeType) === 'annotation' ? { width: 150, height: 150 } : {},
+    edges: []
+  }
+}

@@ -12,27 +12,12 @@ import Link from 'next/link';
 import { SignInProcat } from '@/features/sign-in';
 import { MdDashboard } from 'react-icons/md';
 
-const videos = [
-  "/animal.mp4",
-  "/plant.mp4",
-  "/rain.mp4",
-];
-
-const transformStyles = [
-  "rotate(5deg) translate(-150px)",
-  "rotate(0deg) translate(-70px)",
-  "rotate(-5deg)",
-  "rotate(5deg) translate(70px)",
-  "rotate(-5deg) translate(150px)"
-];
-
 export default async function HomePage() {
   const session = await auth()
 
   return <>
 
     <section className="grid grid-cols-1 mt-12 lg:grid-cols-2 gap-12">
-      {/* Left Column - Hero Content */}
       <div className="space-y-8">
         <Badge variant="outline" className="inline-flex items-center gap-2 rounded-full px-4 py-2">
           <Rocket size={16} />
@@ -43,9 +28,9 @@ export default async function HomePage() {
         <h1 className="text-5xl sm:text-6xl font-bold leading-tight">
           How to quickly generate a short video? Make it easier.
 
-          <GlitchText>
-            Vidzy
-          </GlitchText>
+          <GlitchText
+            speed={1}
+          >Vidzy</GlitchText>
         </h1>
 
         <p className="text-xl">

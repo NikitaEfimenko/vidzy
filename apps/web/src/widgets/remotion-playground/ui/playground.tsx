@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/u
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta"
 import { VideoPlayground } from "@/widgets/remotion-playground/ui"
 import { SettingsIcon } from "lucide-react"
-import { useDeferredValue, useState } from "react"
+import { useDeferredValue, useEffect, useState } from "react"
 import { z } from "zod"
 
 type PlaygroundProps<T extends z.ZodType<any, any, any>,> = {
@@ -27,8 +27,13 @@ export const Playground = <T extends z.ZodObject<any>>({
   showSettingsFlat = false
 }: PlaygroundProps<T>) => {
   const [inputProps, setInputProps] = useState<typeof initInputProps>(initInputProps)
+  
+  useEffect(() => {
+    setInputProps(initInputProps)
+  }, [initInputProps])
+  
   const input = useDeferredValue(inputProps)
-
+  console.log(input, "in playgound input??")
   return <Card className="bg-accent">
     <CardHeader className="py-2">
       <CardTitle>

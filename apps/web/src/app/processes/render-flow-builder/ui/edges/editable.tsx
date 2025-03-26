@@ -33,7 +33,6 @@ export const EditableEdge = ({
   });
  
   const onEdgeClick = () => {
-    console.log("click")
     flowInstance.setEdges((edges: Edge[]) => edges.filter((edge) => edge.id !== id));
   };
 

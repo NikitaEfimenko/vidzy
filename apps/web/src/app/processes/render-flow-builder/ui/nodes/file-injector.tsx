@@ -12,7 +12,7 @@ type FileInjector = Node<{ title: number }, 'number'>;
 
 export const FileInjectorNode = ({ data }: NodeProps<FileInjector>) => {
   return <Card className="bg-accent relative border max-w-[400px] px-0">
-    <Handle type="target" position={Position.Left} />
+    {/* <Handle type="target" position={Position.Left} /> */}
     <Handle type="source" position={Position.Right} />
 
     <CardHeader>

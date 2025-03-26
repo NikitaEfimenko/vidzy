@@ -39,7 +39,7 @@ export class RenderService {
     // Step 3: Render the media file
     console.log("Step 3: Render the media file")
     const filename = this.generateOutputFileName(composition.id, inputProps?.title);
-
+    console.log(`Info: Rendering with ${JSON.stringify(inputProps, null, 2)}`)
     const { buffer } = await this.renderMediaFile(composition, bundled, undefined, inputProps);
     console.log("Step 4: After render")
     if (!buffer) {

@@ -6,6 +6,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTitle,
   DialogTrigger,
 } from "@/shared/ui/dialog"
@@ -31,24 +32,24 @@ export const FormAction = ({
 
   if (!ctaSlot) {
     return <Card>
-    {formProviderComponent(
-      <>
-      <CardHeader className="mt-4">
-        <CardTitle className="text-xl">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-sm">
-          {description}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="w-full">
-        {formSlot}
-      </CardContent>
-      <CardFooter className="mt-4">
-        {formControls}
-      </CardFooter>
-      </>
-    )}
+      {formProviderComponent(
+        <>
+          <CardHeader className="mt-4">
+            <CardTitle className="text-xl">
+              {title}
+            </CardTitle>
+            <CardDescription className="text-sm">
+              {description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="w-full">
+            {formSlot}
+          </CardContent>
+          <CardFooter className="mt-4">
+            {formControls}
+          </CardFooter>
+        </>
+      )}
     </Card>
   }
 
@@ -56,23 +57,25 @@ export const FormAction = ({
     <DialogTrigger asChild>
       {ctaSlot}
     </DialogTrigger>
-    <DialogContent className="md:max-w-xl">
-      {formProviderComponent(<div className="flex flex-col gap-3 overflow-auto">
-        <DialogHeader className="mt-4">
-          <DialogTitle className="text-xl">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="w-full">
-          {formSlot}
-        </div>
-        <DialogFooter className="mt-4">
-          {formControls}
-        </DialogFooter></div>
-      )}
-    </DialogContent>
+    <DialogPortal>
+      <DialogContent className="md:max-w-xl">
+        {formProviderComponent(<div className="flex flex-col gap-3 overflow-auto">
+          <DialogHeader className="mt-4">
+            <DialogTitle className="text-xl">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="text-sm">
+              {description}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-full">
+            {formSlot}
+          </div>
+          <DialogFooter className="mt-4">
+            {formControls}
+          </DialogFooter></div>
+        )}
+      </DialogContent>
+    </DialogPortal>
   </Dialog>
 }

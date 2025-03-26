@@ -11,8 +11,8 @@ type AIHelper = Node<{ title: number }, 'number'>;
 
 export const AIHelperNode = ({ data }: NodeProps<AIHelper>) => {
   return <Card className="bg-accent relative border max-w-[400px]">
-    <WorkflowHandle type="target" position={Position.Left} />
-    <WorkflowHandle type="source" position={Position.Right} />
+    {/* <WorkflowHandle type="target" position={Position.Left} /> */}
+    {/* <WorkflowHandle type="source" position={Position.Right} /> */}
     <CardHeader>
       <CardTitle>
         <NodeIcon className="w-8 h-8" nodeType="ai-helper" />

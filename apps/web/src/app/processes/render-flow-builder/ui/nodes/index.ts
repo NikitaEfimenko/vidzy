@@ -14,6 +14,7 @@ import { TranscribeInjectorNode } from './transcribe-injector';
 import { CustomNodeType } from '../../types';
 import { EditableEdge } from '../edges/editable';
 import { AIHelperNode } from './ai-helper';
+import { DataMapper } from '../edges/data-edge';
 
 export const nodeTypes: NodeTypes = {
   'annotation': AnnotationNode,
@@ -28,5 +29,6 @@ export const nodeTypes: NodeTypes = {
 } satisfies Record<CustomNodeType, NodeTypes[keyof NodeTypes]>;
 
 export const edgeTypes: EdgeTypes = {
-  "editable": EditableEdge
+  "editable": EditableEdge,
+  "mapper": DataMapper
 }

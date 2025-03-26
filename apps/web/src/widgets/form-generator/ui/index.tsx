@@ -193,6 +193,10 @@ export const FormGeneratorProvider = memo(({ onResult, onChange, serverAction, s
   }, [state?.issues])
 
   useEffect(() => {
+    reset(defaultValues)
+  }, [defaultValues])
+
+  useEffect(() => {
     onResult?.(state)
   }, [state])
 
@@ -263,8 +267,9 @@ export const FormGeneratorBody = ({ schema }: GeneratorMainProps) => {
 export const FormGeneratorControls = ({
   schema,
   onChange,
-  pendingSlot
-}: GeneratorMainProps) => {
+  pendingSlot,
+  noAction = false
+}: GeneratorMainProps & {noAction?: boolean}) => {
   const form = useFormContext<z.infer<typeof schema>>()
   const { pending } = useFormStatus()
   const errors = Object.values(form.formState.errors)
@@ -274,7 +279,7 @@ export const FormGeneratorControls = ({
   return <div className="flex items-center gap-2 mt-3">
     {pending && <div className="flex items-center gap-2"><div>{pendingSlot}</div><Loader className="animate-spin"/></div>}
     <Button onClick={() => onChange?.(watchedValues)} variant="secondary" disabled={pending || errors.length > 0} type="button">Update</Button>
-    <Button disabled={pending || errors.length > 0} type="submit">Do action</Button>
+    {!noAction && <Button disabled={pending || errors.length > 0} type="submit">Do action</Button>}
   </div>
 }
 

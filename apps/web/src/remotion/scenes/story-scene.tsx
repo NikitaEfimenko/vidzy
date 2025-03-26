@@ -81,11 +81,6 @@ export const StoryComposition = ({
       });
   }, [handle, subtitlesFileName]);
 
-  if (!subtitles || !audioFileName) {
-    return <div></div>;
-  }
-
-
   const audioOffsetInFrames = Math.round(audioOffsetInSeconds * fps);
 
   const overlapFrames = 15; // Перекрытие в 10 кадров
@@ -122,7 +117,7 @@ export const StoryComposition = ({
             className="container relative flex flex-col justify-between"
           >
             {/* {coverImgFileName && <Img className="cover absolute opacity-95 -z-10"  src={coverImgFileName} />} */}
-            {audioWizEnabled && <div className="flex-1">
+            {audioWizEnabled && audioFileName && <div className="flex-1">
               <AudioViz
                 audioSrc={audioFileName}
                 mirrorWave={mirrorWave}
@@ -155,7 +150,7 @@ export const StoryComposition = ({
   );
 };
 
-export const compositionName = "StoryScene"  as const
+export const compositionName = "StoryScene" as const
 
 export const initInputProps = {
   // Audio settings
@@ -195,9 +190,15 @@ export const initInputProps = {
 export const FPS = 30
 
 export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySchema>> = async ({ props }) => {
-  const durationInSeconds = await getAudioDurationInSeconds(
-    props.audioFileName,
-  );
+  let durationInSeconds = 10
+  try {
+    durationInSeconds = await getAudioDurationInSeconds(
+      props.audioFileName,
+    )
+  }
+  catch {
+    durationInSeconds = 10
+  }
   return {
     durationInFrames: Math.floor(
       (durationInSeconds - props.audioOffsetInSeconds) * FPS,
@@ -212,7 +213,7 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySc
 }
 
 export const config = {
-  durationInFrames: 30 * 60 * 3,
+  durationInFrames: 30 * 10,
   fps: FPS,
   calculateMetadata,
   height: 480,

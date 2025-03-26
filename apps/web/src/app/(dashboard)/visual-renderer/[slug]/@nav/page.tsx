@@ -3,6 +3,7 @@ import { db } from "@/app/config/db";
 import { Card, CardContent } from "@/shared/ui/card";
 import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { Separator } from "@/shared/ui/separator";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { CreateWorkflowCTA } from "@/widgets/workflow-forms/ui/create-cta";
 import { WorkflowsList } from "@/widgets/workflows-list/ui/workflows-list";
 import { renderWorkflows, workflowAccess } from "@vidzy/database";
@@ -50,7 +51,7 @@ export default async function Page({
       </div>
       <Separator className="my-3" />
       <div className="px-3 flex flex-col gap-3">
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Skeleton className="w-full rounded-lg h-96"/>}>
           <WorkflowsList selected={slug} />
         </Suspense>
       </div>
