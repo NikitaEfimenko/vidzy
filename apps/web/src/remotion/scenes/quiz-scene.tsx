@@ -5,8 +5,10 @@ import { z } from 'zod';
 import { Slide } from '../components/slide';
 import { QuizCard } from '../components/quiz-card';
 import { TextFade } from '../components/text-fade';
+import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 
-export const QuizSchema = z.object({
+
+export const QuizSchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
   delayBeforeNextQuestion: z.number().min(0),
   beforeQuizDelayInFrames: z.number().min(0),
@@ -38,6 +40,9 @@ export const QuizComposition = ({
   delayBeforeNextQuestion,
   beforeQuizDelayInFrames
 }: QuizSchemaType): JSX.Element => {
+
+  if (!questions || !options || !correctAnswers || !explanations) return <></>
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
@@ -62,7 +67,7 @@ export const QuizComposition = ({
   // Определяем, на каком вопросе мы находимся, исходя из текущего кадра
   const currentQuestionFrame = frame % totalFramesPerQuestion;
   const isShowingResult = currentQuestionFrame >= timeToRespondInFrames;
-  const areQuestionsFinished = currentQuestionIndex >= questions.length;
+  const areQuestionsFinished = currentQuestionIndex >= (questions?.length ?? 0);
 
   // Обновляем индекс вопроса, если текущий кадр превышает общее время для текущего вопроса
   useEffect(() => {
@@ -79,7 +84,7 @@ export const QuizComposition = ({
   const audioOffsetInFrames = Math.round(_audioOffsetInSeconds * fps);
 
   const overlapFrames = 15; // Перекрытие в 15 кадров
-  const slideDuration = durationInFrames / coverImgFileName.length - overlapFrames
+  const slideDuration = durationInFrames / (coverImgFileName?.length ?? 1) - overlapFrames
 
   const quizCardOpacity = interpolate(
     frame,
@@ -164,15 +169,8 @@ export const initInputProps = {
   delayBeforeNextQuestion: 3,
   beforeQuizDelayInFrames: 2,
   // audioFileName: undefined,
-  audioFileName: "https://storage.procat-saas.online/vidzy/1742394255588-test-audio.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142420Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c36da094315d8dd6ce9e79e15ed455713f36ee5dc8d2d4436791cd28ec5c640b",
-  coverImgFileName: [
-    "https://storage.procat-saas.online/vidzy/1742394109471-en-im1.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142150Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3a275eed92670b022e739894306af866298ff0fb615caa09f0a1631a39bb7a2f",
-    "https://storage.procat-saas.online/vidzy/1742394126642-en-im3.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0f05a3eaf97de7d39f8571a6d29f7b99e558dd0ccf44148a80529fc7ba752700",
-    "https://storage.procat-saas.online/vidzy/1742394133788-en-im4.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142215Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=832310c35f89796a184cda27ce042b039c2ae1303ed8e3b30bc4ad1c1757d106",
-    // "https://storage.procat-saas.online/vidzy/1742394142604-en-im5.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142224Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c14d3274530b4d51ec5b8fff83784778df3332b9c2627f49f6d0fac84743c73d",
-    // "https://storage.procat-saas.online/vidzy/1742394118488-en-im2.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250319%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250319T142159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=59a408cbc9f0193c26a6e7535c3bfcfc04029c03a9b24d61fe55ab358ba5c902",
-
-  ],
+  audioFileName: undefined,
+  coverImgFileName: [],
   audioWizEnabled: false,
 
 
@@ -224,7 +222,7 @@ export const initInputProps = {
     2,
     2
   ],
-
+  format: "1:1" as const,
 
   timeToRespond: 5
 
@@ -236,17 +234,18 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof QuizSch
   // const durationInSeconds = await getAudioDurationInSeconds(
   //   props.audioFileName,
   // );
+  const formatValues = getFormatByEnum(props.format)
   return {
     durationInFrames: Math.floor(
-      (((Number(props.timeToRespond) + Number(props.delayBeforeNextQuestion)) * props.questions.length + Number(props.beforeQuizDelayInFrames)) - Number(props.audioOffsetInSeconds)) * FPS,
+      (((Number(props.timeToRespond) + Number(props.delayBeforeNextQuestion)) * (props.questions.length ?? 1) + Number(props.beforeQuizDelayInFrames)) - Number(props.audioOffsetInSeconds)) * FPS,
     ),
-    // durationInFrames: 10 * 15,
     props: {
       ...props,
     },
     abortSignal: new AbortController().signal,
     defaultProps: initInputProps,
     fps: FPS,
+    ...formatValues
   };
 }
 
@@ -254,8 +253,8 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof QuizSch
 export const config = {
   durationInFrames: 30 * 20,
   fps: FPS,
-  height: 480,
-  width: 640,
+  height: 720,
+  width: 1280,
   calculateMetadata
 }
 

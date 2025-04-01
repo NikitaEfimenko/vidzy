@@ -22,6 +22,68 @@ export class RenderService {
 
   private readonly logger = new Logger(RenderService.name);
 
+
+  private normalizeFormData(formData: Record<string, any>): any {
+    const result: Record<string, any> = {};
+  
+    for (const [key, value] of Object.entries(formData)) {
+      this.processKey(key, value, result);
+    }
+  
+    // Пост-обработка: преобразуем объекты с числовыми ключами в массивы
+    return this.convertNumberKeysToArrays(result);
+  }
+  
+  private processKey(fullKey: string, value: any, targetObj: Record<string, any>) {
+    const parts = fullKey.split('.');
+    let current = targetObj;
+  
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isLast = i === parts.length - 1;
+      const nextPart = parts[i + 1];
+      const isNextNumber = !isNaN(parseInt(nextPart));
+  
+      if (isLast) {
+        current[part] = value;
+      } else {
+        if (!current[part]) {
+          // Создаем объект или массив в зависимости от следующей части
+          current[part] = isNextNumber ? {} : [];
+        }
+        current = current[part];
+      }
+    }
+  }
+  
+  private convertNumberKeysToArrays(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.convertNumberKeysToArrays(item));
+    }
+  
+    if (typeof obj === 'object' && obj !== null) {
+      // Проверяем, все ли ключи - числа (тогда это массив)
+      const keys = Object.keys(obj);
+      const allKeysAreNumbers = keys.every(k => !isNaN(parseInt(k)));
+  
+      if (allKeysAreNumbers && keys.length > 0) {
+        // Сортируем по числовым ключам и преобразуем в массив
+        return keys
+          .sort((a, b) => parseInt(a) - parseInt(b))
+          .map(k => this.convertNumberKeysToArrays(obj[k]));
+      }
+  
+      // Рекурсивно обрабатываем обычные объекты
+      const result: Record<string, any> = {};
+      for (const [key, val] of Object.entries(obj)) {
+        result[key] = this.convertNumberKeysToArrays(val);
+      }
+      return result;
+    }
+  
+    return obj;
+  }
+
   async getCompositions(): Promise<{ message: string }> {
     return { message: 'pong\n' };
   }
@@ -33,14 +95,16 @@ export class RenderService {
     // Step 1: Bundle the composition
     const bundled = await this.bundleComposition();
     // Step 2: Select the composition
+    const normalizedInputProps = this.normalizeFormData(inputProps);
     console.log("Step 2: Select the composition")
-    const composition = await this.selectComposition(bundled, compositionId, inputProps);
+    const composition = await this.selectComposition(bundled, compositionId, normalizedInputProps);
 
     // Step 3: Render the media file
     console.log("Step 3: Render the media file")
+    
     const filename = this.generateOutputFileName(composition.id, inputProps?.title);
-    console.log(`Info: Rendering with ${JSON.stringify(inputProps, null, 2)}`)
-    const { buffer } = await this.renderMediaFile(composition, bundled, undefined, inputProps);
+    console.log(`Info: Rendering with ${JSON.stringify(normalizedInputProps, null, 2)}`)
+    const { buffer } = await this.renderMediaFile(composition, bundled, undefined, normalizedInputProps);
     console.log("Step 4: After render")
     if (!buffer) {
       throw new Error(`Failed to generate video: null buffer`);
@@ -108,8 +172,7 @@ export class RenderService {
         ignoreCertificateErrors: true,
         enableMultiProcessOnLinux: false,
         disableWebSecurity: true,
-        // gl: "angle-egl"
-        // gl: "egl"
+        gl: "angle-egl" 
       },
     });
   }
@@ -128,8 +191,7 @@ export class RenderService {
         enableMultiProcessOnLinux: false,
         ignoreCertificateErrors: true,
         disableWebSecurity: true,
-        // gl: "angle-egl",
-        // gl: "angle",
+        gl: "angle-egl",
       },
       concurrency: 1,
       inputProps,

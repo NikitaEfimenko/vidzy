@@ -11,15 +11,26 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../card"
+import { cn } from "@/shared/lib/utils"
 
 type FormActionProps = {
-  ctaSlot?: ReactElement,
   formSlot: ReactElement
   formControls: ReactElement,
   formProviderComponent?: (bodyContent: ReactNode) => ReactNode
   title: string | ReactElement,
   description: string
-}
+  className?: string
+} & (
+  {
+    ctaSlot: ReactElement;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  } | {
+    ctaSlot?: undefined;
+    open?: never;
+    onOpenChange?: never;
+  }
+)
 
 export const FormAction = ({
   ctaSlot,
@@ -27,6 +38,9 @@ export const FormAction = ({
   formControls,
   title,
   description,
+  className,
+  open,
+  onOpenChange,
   formProviderComponent = f => f
 }: FormActionProps) => {
 
@@ -53,12 +67,12 @@ export const FormAction = ({
     </Card>
   }
 
-  return <Dialog>
+  return <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogTrigger asChild>
       {ctaSlot}
     </DialogTrigger>
     <DialogPortal>
-      <DialogContent className="md:max-w-xl">
+      <DialogContent className={cn("md:max-w-xl", className)}>
         {formProviderComponent(<div className="flex flex-col gap-3 overflow-auto">
           <DialogHeader className="mt-4">
             <DialogTitle className="text-xl">

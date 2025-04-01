@@ -18,15 +18,14 @@ import { z } from "zod";
 import { AudioViz } from "../components/audio-viz";
 import { Slide } from "../components/slide";
 import { PaginatedSubtitles } from "../components/subtitles";
+import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 
-export const StorySchema = z.object({
+export const StorySchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
-  subtitlesFileName: z.string(),
-  audioFileName: z.string(),
+  subtitlesFileName: z.string().url().describe("url").optional(),
+  audioFileName: z.string().url().describe("url").optional(),
   coverImgFileName: z.array(z
-    .string()),
-  titleText: z.string(),
-  titleColor: zColor(),
+    .string().url().describe("url")),
   waveColor: zColor(),
   subtitlesTextColor: zColor(),
   subtitlesLinePerPage: z.number().int().min(0),
@@ -40,14 +39,13 @@ export const StorySchema = z.object({
   waveNumberOfSamples: z.enum(["32", "64", "128", "256", "512"]),
 });
 
+
 export type StorySchemaType = z.infer<typeof StorySchema>;
 
 export const StoryComposition = ({
   subtitlesFileName,
   audioFileName,
   coverImgFileName,
-  titleText,
-  titleColor,
   subtitlesTextColor,
   subtitlesLinePerPage,
   waveColor,
@@ -59,7 +57,8 @@ export const StoryComposition = ({
   onlyDisplayCurrentSentence,
   mirrorWave,
   audioOffsetInSeconds,
-  audioWizEnabled
+  audioWizEnabled,
+  format
 }: StorySchemaType) => {
   const { durationInFrames, fps } = useVideoConfig();
 
@@ -157,16 +156,12 @@ export const initInputProps = {
   audioOffsetInSeconds: 0,
 
   // Title settings
-  subtitlesFileName: "https://storage.procat-saas.online/vidzy/1741823137631-srt-1741823137630.srt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T234538Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6769acee5841ccfd01a0c8f8bac54b2c2af6d8c7c11187f705e9d727db009ee5",
-  audioFileName: "https://storage.procat-saas.online/vidzy/1741823026614-voice-1741823026613.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T234348Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e9b5c8250c7726ac9d43f2a0e9059c9df178cecc5b95e7444dff1ac2c75e5ac3",
+  subtitlesFileName: "https://storage.procat-saas.online/vidzy/1743102783091-srt-1743102783090.srt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T191303Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d3308787f12dab6d14ebf1f4cc14964656152d0a4329e5348660e4cfe8bc769f",
+  audioFileName: "https://storage.procat-saas.online/vidzy/1743103602387-agile.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T192643Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=03d8114318f1bbcf78b98e3d92c058be2557fcc5be47df6a6753c77dd45e1525",
   coverImgFileName: [
-    "https://storage.procat-saas.online/vidzy/1741822471582-3c359253ff9a11ef8d789e380d4be75f.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T233432Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=2f14895d1f206acdb847855506d819818f566e37e66bfc0bb1e0d5b06b3f8a41",
-    "https://storage.procat-saas.online/vidzy/1741822462161-1acef1e3ff9a11ef9fb866b929a52cde.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T233423Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=720cc11ce051c4908f8d4c8a7ebc76498c7d4e45c69140fd6838a6c922f5d281",
-    "https://storage.procat-saas.online/vidzy/1741822501737-fc2ad60eff9911ef928c82872adeaf38.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T233502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=637e8ee7dc5a03344900a17df589739941ba26f8a537b0e4ea55e8620ccb126e",
-    "https://storage.procat-saas.online/vidzy/1741822479902-ad15a3f3ff9911efb48eb633c76826bc.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250312%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250312T233441Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9523153bb1fcbe1c35155b7567ef4c662744b08f61f732255c2aaa29ff5f9546"
+    // "https://storage.procat-saas.online/vidzy/1743111899660-image.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T214500Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1a7363de17f182fd4f07d9d43722ece11cbb9d311ef797cd736e00b845b01119",
+    // "https://storage.procat-saas.online/vidzy/1743111987160-image.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T214628Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=532db9756801775626e6c6b8b87fd1e64acaa0d25729b66f47388bb8c90860b1"
   ],
-  titleText: "test",
-  titleColor: "rgba(0, 0, 200, 0.93)",
 
   // Subtitles settings
   // subtitlesFileName: 'https://storage.procat-saas.online/vidzy/1741730616072-srt-1741730616072.srt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T220336Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=535946c31b7b9b45327cdb1d05ae80da9fa2b84bff2c982b52360c89ed62179f',
@@ -185,16 +180,20 @@ export const initInputProps = {
   waveLinesToDisplay: 29,
   waveNumberOfSamples: "256" as const,
   mirrorWave: true,
+  format: "1:1" as const,
 } satisfies z.infer<typeof StorySchema>
 
 export const FPS = 30
 
 export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySchema>> = async ({ props }) => {
+  const formatValues = getFormatByEnum(props.format)
   let durationInSeconds = 10
   try {
-    durationInSeconds = await getAudioDurationInSeconds(
-      props.audioFileName,
-    )
+    if (props.audioFileName) {
+      durationInSeconds = await getAudioDurationInSeconds(
+        props.audioFileName,
+      )
+    }
   }
   catch {
     durationInSeconds = 10
@@ -207,15 +206,18 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySc
       ...props,
     },
     abortSignal: new AbortController().signal,
-    defaultProps: initInputProps,
+    defaultProps: {...initInputProps, ...props},
     fps: FPS,
+    ...formatValues
   };
 }
 
 export const config = {
   durationInFrames: 30 * 10,
   fps: FPS,
+  // width: 720,
+  // height: 1280,
+  width: 1280,
+  height: 720,
   calculateMetadata,
-  height: 480,
-  width: 640
 }

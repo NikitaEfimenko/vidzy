@@ -9,6 +9,57 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function getValueByPath<T>(obj: T, path: string): unknown {
+  try {
+    if (!obj || typeof obj !== "object" || !path) return undefined;
+
+    const keys = path.split('.');
+    let current: any = obj;
+
+    for (const key of keys) {
+      if (current === null || current === undefined) return undefined;
+
+      // Преобразуем числовые ключи (для массивов)
+      const arrayKey = /^\d+$/.test(key) ? parseInt(key, 10) : key;
+      
+      // Проверяем существование ключа (безопасный доступ)
+      if (!(arrayKey in current)) return undefined;
+      
+      current = current[arrayKey];
+    }
+
+    return current;
+  } catch {
+    return undefined; // На случай любых непредвиденных ошибок
+  }
+}
+
+export const getFileTypeFromUrl = (url: string): typeof fileTypeEnum.enumValues[number] => {
+  if (!url) return 'other';
+  
+  try {
+    // Создаем URL объект для удобного парсинга
+    const urlObj = new URL(url);
+    // Получаем путь (pathname) и извлекаем последнюю часть после /
+    const pathParts = urlObj.pathname.split('/');
+    const fileName = pathParts[pathParts.length - 1];
+    
+    // Если fileName пустой (например, URL заканчивается на /)
+    if (!fileName) return 'other';
+    
+    // Используем вашу существующую функцию
+    return getFileTypeByExtension(fileName);
+  } catch (e) {
+    // Если URL невалидный, пытаемся извлечь имя файла вручную
+    const lastSlashIndex = url.lastIndexOf('/');
+    if (lastSlashIndex >= 0 && lastSlashIndex < url.length - 1) {
+      const fileName = url.slice(lastSlashIndex + 1).split('?')[0].split('#')[0];
+      return getFileTypeByExtension(fileName);
+    }
+    return 'other';
+  }
+};
+
 export const getFileTypeByExtension = (fileName: string): typeof fileTypeEnum.enumValues[number] => {
   const extension = fileName.split('.').pop()?.toLowerCase();
   switch (extension) {

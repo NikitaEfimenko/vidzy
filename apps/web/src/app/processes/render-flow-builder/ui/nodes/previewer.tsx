@@ -11,15 +11,17 @@ import { WorkflowHandle as Handle } from "../handle";
 import { useWorkflowEditor } from "../../services";
 import { z } from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
-
+import { NodeLayout } from "./node-layout";
 
 type Previewer = Node<{ title: number, inputSchema?: Record<string, any>, inputData?: Record<string, any>, compositionName: typeof scenes[number]["compositionName"] }, 'previewer'>;
 
 export const PreviewerNode = ({ data, id }: NodeProps<Previewer>) => {
-  const [compName, setCompositionName] = useState<typeof scenes[number]["compositionName"]>('PhysicsPreviewScene')
+  const [compName, setCompositionName] = useState<typeof scenes[number]["compositionName"]>(() => {
+    return data.compositionName ?? 'StoryScene'
+  })
   const conf = useMemo(() => scenes.find(el => el.compositionName === compName), [compName])
   const { flowInstance } = useWorkflowEditor()
-  console.log(data, "is preview data")
+
   useEffect(() => {
     flowInstance.updateNodeData(id, (node) => ({
       ...node.data,
@@ -31,11 +33,13 @@ export const PreviewerNode = ({ data, id }: NodeProps<Previewer>) => {
     }))
   }, [compName, flowInstance, conf?.schema])
 
-  return <Card className="bg-accent relative border px-0">
-    <Handle type="target" position={Position.Left} />
-    {/* <Handle type="source" position={Position.Right} /> */}
-    <NodeResizer minWidth={400} />
-    <CardHeader>
+  return <NodeLayout
+    className="min-w-[680px]"
+    handlersSlot={<>
+      <Handle type="target" position={Position.Left} />
+      <NodeResizer minWidth={400} />
+    </>}
+    titleSlot={
       <Select onValueChange={v => setCompositionName(v as typeof scenes[number]["compositionName"])} defaultValue={compName}>
         <SelectTrigger>
           <SelectValue placeholder="Select value" />
@@ -48,15 +52,14 @@ export const PreviewerNode = ({ data, id }: NodeProps<Previewer>) => {
           ))}
         </SelectContent>
       </Select>
-    </CardHeader>
-    <CardContent>
-
-      {conf && <Playground
-        {...conf}
-        schema={conf.schema as typeof conf.schema}
-        showSettingsFlat
-        initInputProps={{...conf.initInputProps, ...(data.inputData ?? {}) as Partial<z.infer<typeof conf.schema>>}}
-      />}
-    </CardContent>
-  </Card>
+    }
+  >
+    {conf && <Playground
+      {...conf}
+      schema={conf.schema as typeof conf.schema}
+      showSettingsFlat
+      disableForm
+      initInputProps={{ ...conf.initInputProps, ...(data.inputData ?? {}) as Partial<z.infer<typeof conf.schema>> }}
+    />}
+  </NodeLayout>
 }

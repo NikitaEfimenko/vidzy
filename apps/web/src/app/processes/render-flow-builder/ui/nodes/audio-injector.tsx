@@ -7,24 +7,20 @@ import { NodeIcon } from './node-icon';
 import { GenerateSpeechCTA } from "@/features/generate-speech/ui";
 import { nodeContextSchema } from "../../config";
 import { WorkflowHandle as Handle } from "../handle";
+import { NodeLayout } from "./node-layout";
 
 type AudioInjector = Node<{ title: number }, 'number'>;
 
 export const AudioInjectorNode = ({ data }: NodeProps<AudioInjector>) => {
-  return <Card className="bg-accent relative border max-w-[400px] px-0">
-    <Handle type="target" position={Position.Left} />
-    <Handle type="source" position={Position.Right} />
-    
-    <CardHeader>
-      <CardTitle>
-        <NodeIcon className="w-8 h-8" nodeType="audio-injector" />
-      </CardTitle>
-      <CardDescription>
-        {nodeContextSchema["audio-injector"].title}
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      <GenerateSpeechCTA formOnly />
-    </CardContent>
-  </Card>
+
+  return <NodeLayout
+    handlersSlot={<>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+    </>}
+    titleSlot={<NodeIcon className="w-8 h-8" nodeType="audio-injector" />}
+    descriptionSlot={<>     {nodeContextSchema["audio-injector"].title}</>}
+  >
+    <GenerateSpeechCTA formOnly />
+  </NodeLayout>
 }

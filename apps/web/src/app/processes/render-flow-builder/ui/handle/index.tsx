@@ -15,11 +15,11 @@ export const WorkflowHandle = (props: WorkflowHandleProps) => {
       const sourceNode = service.state.elements.find(node => node.id === e.source)
       const sourceFromHandle = service.state.edges.filter(edge => edge.source === e.source).length
       const targetFromHandle = service.state.edges.filter(edge => edge.target === e.target).length
-      if (targetFromHandle === 1) return false
-      if (sourceNode?.type === 'condition') return false
-      if (sourceFromHandle < 1) return true
+      // if (targetFromHandle === 1) return false
+      // if (sourceNode?.type === 'condition') return false
+      // if (sourceFromHandle < 1) return true
 
-      return false
+      return true
     }}
   />
 }

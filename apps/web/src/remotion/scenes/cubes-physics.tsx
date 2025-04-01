@@ -12,10 +12,12 @@ import { z } from "zod";
 
 import { TextFade } from "../components/text-fade";
 import Cubes from "../components/cubes";
+import { BaseSceneSchema, getFormatByEnum } from "../helpers";
+
 
 loadFont();
 
-export const CubesSceneSchema = z.object({
+export const CubesSceneSchema = BaseSceneSchema.extend({
   count: z.string()
 })
 
@@ -46,10 +48,12 @@ export const compositionName = "PhysicsPreviewScene"  as const
 export const FPS = 30
 
 export const initInputProps = {
-  count: '10'
+  count: '10',
+  format: "1:1" as const,
 } satisfies CubesSceneSchemaProps
 
 export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof CubesSceneSchema>> = async ({ props }) => {
+  const formatValues = getFormatByEnum(props.format)
   return {
     durationInFrames: 30 * 5,
     props: {
@@ -58,14 +62,15 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof CubesSc
     abortSignal: new AbortController().signal,
     defaultProps: initInputProps,
     fps: FPS,
+    ...formatValues
   };
 }
 
 export const config = {
   durationInFrames: 30 * 5,
   fps: FPS,
-  height: 480,
-  width: 640,
+  height: 720,
+  width: 1280,
   calculateMetadata
 }
 

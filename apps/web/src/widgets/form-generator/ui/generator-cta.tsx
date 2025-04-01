@@ -15,9 +15,27 @@ type GeneratorProps = {
   onResult?: (v: any) => void,
   formStateSlot?: ReactElement,
   docsSlot?: ReactElement,
+  showForm?: boolean,
 } & Generator.GeneratorMainProps
 
-export const FormGeneratorCTA = memo(({ docsSlot, pendingSlot, ctaSlot, formStateSlot, schema, onResult, serverAction, defaultValues, onChange }: GeneratorProps) => {
+export const FormGeneratorCTA = memo(({ showForm = true, docsSlot, pendingSlot, ctaSlot, formStateSlot, schema, onResult, serverAction, defaultValues, onChange }: GeneratorProps) => {
+  if (!showForm) {
+    return <Generator.FormGeneratorProvider
+      schema={schema}
+      serverAction={serverAction}
+      onChange={onChange}
+      onResult={onResult}
+      defaultValues={defaultValues}
+    >
+      <div className="hidden">
+        <Generator.FormGeneratorBody schema={schema}></Generator.FormGeneratorBody>
+      </div>
+      <div className="flex items-center gap-2">
+        <Generator.FormGeneratorControls noUpdater pendingSlot={pendingSlot} onChange={onChange} schema={schema}></Generator.FormGeneratorControls>
+      </div>
+    </Generator.FormGeneratorProvider>
+  }
+
   return <FormAction
     title="Form"
     description="Form generator"
@@ -25,7 +43,7 @@ export const FormGeneratorCTA = memo(({ docsSlot, pendingSlot, ctaSlot, formStat
     formSlot={<div className="max-h-[400px] overflow-auto">
       <div className="flex items-center justify-center w-full">
         {docsSlot}
-        </div>
+      </div>
       <Generator.FormGeneratorBody schema={schema}></Generator.FormGeneratorBody>
       {formStateSlot && <>
         <Separator className="mt-2 mb-2" />

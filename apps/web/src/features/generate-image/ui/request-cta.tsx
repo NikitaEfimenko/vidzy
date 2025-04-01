@@ -24,7 +24,9 @@ export const RequestAIImageCTA = ({
     serverAction={generateAIImageAction}
     onChange={setInputProps}
     schema={GenerateImageDtoSchema}
-    defaultValues={null}
+    defaultValues={{
+      provider: "yandex"
+    }}
     onResult={(v) => {
       const parsed = ResultResponse.safeParse(v)
       if (parsed.success) {
@@ -41,7 +43,10 @@ export const RequestAIImageCTA = ({
           </>
         }
         formControls={<></>}
-        ctaSlot={<Button size="icon" variant="secondary"><MdPreview></MdPreview>Show generation</Button>}
+        ctaSlot={
+        <div className="flex items-center w-full justify-center">
+          <Button size="sm" variant="secondary"><MdPreview></MdPreview>Show Loading...</Button>
+        </div>}
         formProviderComponent={(body) => <>{body}</>}
       />}
     </>

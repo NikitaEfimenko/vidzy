@@ -16,6 +16,7 @@ type PlaygroundProps<T extends z.ZodType<any, any, any>,> = {
   initInputProps: z.infer<T>,
   compositionName: string,
   showSettingsFlat?: boolean
+  disableForm?: boolean
 }
 
 export const Playground = <T extends z.ZodObject<any>>({
@@ -24,7 +25,8 @@ export const Playground = <T extends z.ZodObject<any>>({
   config,
   initInputProps,
   compositionName,
-  showSettingsFlat = false
+  showSettingsFlat = false,
+  disableForm = false,
 }: PlaygroundProps<T>) => {
   const [inputProps, setInputProps] = useState<typeof initInputProps>(initInputProps)
   
@@ -33,7 +35,7 @@ export const Playground = <T extends z.ZodObject<any>>({
   }, [initInputProps])
   
   const input = useDeferredValue(inputProps)
-  console.log(input, "in playgound input??")
+
   return <Card className="bg-accent">
     <CardHeader className="py-2">
       <CardTitle>
@@ -54,6 +56,7 @@ export const Playground = <T extends z.ZodObject<any>>({
     </CardContent>
     <CardFooter>
       <FormGeneratorCTA
+        showForm={!disableForm}
         serverAction={renderVideoAction.bind(null, compositionName)}
         onChange={setInputProps}
         pendingSlot={<span className="text-xs">It can take from 30 seconds to a minute.</span>}

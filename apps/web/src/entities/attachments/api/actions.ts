@@ -5,7 +5,7 @@ import { CreateAttachmentDto } from "../dto/create-attachment"
 import { revalidatePath } from "next/cache"
 import { AttachmentsModelType } from "../dto/model"
 import { db } from "@/app/config/db"
-import { attachments } from "@vidzy/database"
+import { attachments, fileTypeEnum } from "@vidzy/database"
 import { eq, and } from 'drizzle-orm';
 
 type FormState = {
@@ -110,4 +110,35 @@ export const removeAttachment = async (
   return {
     message: "success"
   }
+}
+
+
+export async function getAttachments({
+  userId,
+  showPublic,
+  page,
+  pageSize,
+  fileType
+}: {
+  userId?: string;
+  showPublic?: boolean;
+  page: number;
+  pageSize: number;
+  fileType?: typeof fileTypeEnum.enumValues[number];
+}): Promise<{attachments: Array<AttachmentsModelType>}> {
+  let conditions = [];
+  if (userId) conditions.push(eq(attachments.userId, userId));
+  if (fileType) conditions.push(eq(attachments.fileType, fileType));
+  if (showPublic) conditions.push(eq(attachments.public, showPublic));
+
+  let base = db.select().from(attachments).offset(page * pageSize).limit(pageSize);
+
+  if (conditions.length > 0) {
+    const list = await base.where(and(...conditions)).execute()
+    return {
+      attachments: list
+    };
+  }
+
+  return { attachments: await base.execute() };
 }
