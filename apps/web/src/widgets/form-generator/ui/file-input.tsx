@@ -10,6 +10,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FileSelector } from './file-selector';
 import Link from 'next/link';
 import { FaMagic } from 'react-icons/fa';
+import { AttachmentsModelType } from '@/entities/attachments/dto/model';
 
 interface FileInputProps {
   name: string;
@@ -22,6 +23,7 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
   const fileInput = useRef<HTMLInputElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [fileType, setFileType] = useState<typeof fileTypeEnum.enumValues[number]>('other');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,10 +34,66 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
     }
   };
 
-  const elems = register?.(name) ?? {}
+  const elems = register?.(name) ?? {};
+
+  // Функция для преобразования URL в File объект
+  const urlToFile = async (url: string, fileName: string): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  };
+
+  const handleSelectAttachment = async (attachment: AttachmentsModelType) => {
+    if (attachment && attachment.fileUrl) {
+      try {
+        // Преобразуем URL в File объект
+        const file = await urlToFile(attachment.fileUrl, attachment.fileName);
+
+        // Генерируем data URL для превью
+        generateDataUrl(file, setDataUrl);
+        const type = getFileTypeByExtension(attachment.fileName);
+        setFileType(type);
+
+        // Вызываем onChange из register с File объектом
+        if (elems?.onChange) {
+          const fakeEvent = {
+            target: {
+              value: file,
+              name: elems.name,
+            },
+          };
+          elems.onChange(fakeEvent);
+        }
+      } catch (error) {
+        console.error('Error converting URL to File:', error);
+      }
+      setIsDialogOpen(false);
+    }
+  };
 
   return (
     <div>
+      <FormAction
+        title={
+          <div className='flex gap-4 items-center'>
+            <span> Select your files</span>
+            <Link href="/attachments">
+              <Button size="sm" type="button"><FaMagic />Generate your own</Button>
+            </Link>
+          </div>}
+        description=""
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        className="md:max-w-6xl"
+        ctaSlot={<Button><FilesIcon />Select form attachments</Button>}
+        formSlot={<FileSelector
+          withCaption={false}
+          withRemove={false}
+          withCurrentUser
+          handleSelect={handleSelectAttachment}
+        />}
+        formControls={<></>}
+      />
       <FilePreview
         fileType={fileType}
         fileUrl={dataUrl ?? undefined}
@@ -51,7 +109,13 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
           handleFileChange(e);
           const file = e.target.files?.[0];
           if (file && elems?.onChange) {
-            elems?.onChange?.(file);
+            const fakeEvent = {
+              target: {
+                value: file,
+                name: elems.name
+              },
+            };
+            elems?.onChange?.(fakeEvent);
           }
         }}
       />
@@ -61,7 +125,7 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
 };
 
 
-export const FileInputUrl: React.FC<FileInputProps> = ({ defaultValue,  name, register, errors }) => {
+export const FileInputUrl: React.FC<FileInputProps> = ({ defaultValue, name, register, errors }) => {
   const [dataUrl, setDataUrl] = useState<string | null>(() => {
     return defaultValue ?? null
   })
@@ -86,7 +150,7 @@ export const FileInputUrl: React.FC<FileInputProps> = ({ defaultValue,  name, re
             <div className='flex gap-4 items-center'>
               <span> Select your files</span>
               <Link href="/attachments">
-                <Button size="sm" type="button"><FaMagic/>Generate your own</Button>
+                <Button size="sm" type="button"><FaMagic />Generate your own</Button>
               </Link>
             </div>}
           description=""

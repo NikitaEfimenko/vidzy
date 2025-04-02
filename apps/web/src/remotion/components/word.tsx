@@ -79,7 +79,7 @@ export const Word: React.FC<{
 
 
   const fontSize = useMemo(() => {
-    const baseFontSize = 48; // Базовый размер шрифта
+    const baseFontSize = 52; // Базовый размер шрифта
     return `${baseFontSize * fontSizeProgress}px`;
   }, [fontSizeProgress]);
 

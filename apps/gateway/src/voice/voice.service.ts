@@ -145,7 +145,7 @@ export class VoiceService {
         const arrayBuffer = await fileResponse.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        const filename = `srt-${Date.now()}.srt`;
+        const filename = `${file.originalname ?? 'filename'}-srt-${Date.now()}.srt`;
         const multerFile: Express.Multer.File = {
           fieldname: 'file',
           originalname: filename,

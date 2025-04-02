@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const TTSDtoSchema = z.object({
-  text: z.string(),
+  text: z.string().max(200, "Vidzy Alpha testing up to 200 characters for speech generation - you can upload your track as attachments"),
   voicePreset: z.string().optional()
 })
 

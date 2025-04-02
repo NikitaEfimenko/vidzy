@@ -70,6 +70,7 @@ type AttachmentsListProps = {
   showPublic?: boolean;
   withRemove?: boolean;
   pageSize?: number;
+  fileTypeFilter?: typeof fileTypeEnum.enumValues[number] | 'all',
   handleSelect: (item: Awaited<ReturnType<typeof getAttachments>>["attachments"][number]) => void
 };
 
@@ -81,10 +82,11 @@ export const FileSelector = ({
   showPublic = false,
   withRemove = false,
   pageSize = 10,
-  handleSelect
+  handleSelect,
+  fileTypeFilter
 }: AttachmentsListProps) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [fileType, setFileType] = useState<typeof fileTypeEnum.enumValues[number] | 'all'>('all');
+  const [fileType, setFileType] = useState<typeof fileTypeEnum.enumValues[number] | 'all'>(fileTypeFilter ?? 'all');
   const session = useSession();
 
   // Динамический ключ для useSWR
