@@ -1,43 +1,32 @@
 FROM node:22-bookworm-slim
 
-# Устанавливаем зависимости для Chrome, Remotion и ffmpeg
+# Устанавливаем зависимости
 RUN apt-get update && apt-get install -y \
-    libnss3 \
-    libdbus-1-3 \
-    libatk1.0-0 \
-    libgbm-dev \
-    libasound2 \
-    libxrandr2 \
-    libxkbcommon-dev \
-    libxfixes3 \
-    libxcomposite1 \
-    libxdamage1 \
-    libatk-bridge2.0-0 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libcups2 \
-    ffmpeg \
+    libnss3 libdbus-1-3 libatk1.0-0 libgbm-dev libasound2 \
+    libxrandr2 libxkbcommon-dev libxfixes3 libxcomposite1 \
+    libxdamage1 libatk-bridge2.0-0 libpango-1.0-0 libcairo2 \
+    libcups2 ffmpeg \
     && npm install -g pnpm
 
 WORKDIR /app
 
-# 1. Копируем файлы конфигурации (для кэширования)
+# 1. Копируем файлы конфигурации и lock-файлы
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
-# 2. Копируем ВСЕ package.json из монорепозитория
+# 2. Копируем ВСЕ package.json (для правильного разрешения зависимостей)
 COPY packages/*/package.json ./packages/
 COPY apps/*/package.json ./apps/
 
-# 3. Устанавливаем зависимости с --frozen-lockfile
+# 3. Устанавливаем зависимости
 RUN pnpm install --frozen-lockfile
 
-# 4. Копируем ВЕСЬ проект (после установки зависимостей)
+# 4. Копируем ВЕСЬ исходный код (включая packages/database)
 COPY . .
 
-# 5. Собираем все пакеты через TurboRepo
+# 5. Собираем проект через TurboRepo
 RUN pnpm run db:generate && pnpm run build
 
-# 6. Убеждаемся, что Remotion Browser установлен
+# 6. Устанавливаем браузер для Remotion (если нужно)
 RUN npx remotion browser ensure
 
 CMD ["pnpm", "run", "start"]
