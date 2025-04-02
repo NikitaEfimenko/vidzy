@@ -2,7 +2,7 @@
 import { auth } from '@/app/config/auth';
 import { z } from 'zod';
 
-const FileSchema = z.instanceof(File, { message: "Invalid file" });
+const FileSchema = z.instanceof(Blob)
 
 type FormState = {
   result: any
