@@ -1,7 +1,6 @@
-# Используем официальный образ Node.js на Debian Bookworm (имеет glibc >= 2.36)
 FROM node:22-bookworm-slim
 
-# Устанавливаем необходимые зависимости для Chrome, Remotion и ffmpeg
+# Устанавливаем зависимости для Chrome, Remotion и ffmpeg
 RUN apt-get update && apt-get install -y \
     libnss3 \
     libdbus-1-3 \
@@ -18,30 +17,27 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libcups2 \
     ffmpeg \
-    # Устанавливаем PNPM (если нет в образе)
     && npm install -g pnpm
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы, необходимые для установки зависимостей
-COPY .npmrc package.json pnpm-lock.yaml* pnpm-workspace.yaml turbo.json ./
+# 1. Копируем файлы конфигурации (для кэширования)
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
-# Копируем все package.json из монорепозитория (если используется TurboRepo)
+# 2. Копируем ВСЕ package.json из монорепозитория
 COPY packages/*/package.json ./packages/
 COPY apps/*/package.json ./apps/
 
-# Устанавливаем зависимости с --frozen-lockfile
+# 3. Устанавливаем зависимости с --frozen-lockfile
 RUN pnpm install --frozen-lockfile
 
-# Копируем остальные файлы проекта
+# 4. Копируем ВЕСЬ проект (после установки зависимостей)
 COPY . .
 
-# Генерируем Prisma клиент и собираем проект
+# 5. Собираем все пакеты через TurboRepo
 RUN pnpm run db:generate && pnpm run build
 
-# Убеждаемся, что браузер для Remotion установлен
+# 6. Убеждаемся, что Remotion Browser установлен
 RUN npx remotion browser ensure
 
-# Команда для запуска приложения
 CMD ["pnpm", "run", "start"]
