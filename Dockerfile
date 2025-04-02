@@ -32,4 +32,6 @@ RUN pnpm run db:generate && pnpm run build
 # 6. Устанавливаем браузер для Remotion (если нужно)
 RUN npx remotion browser ensure
 
+ENV NODE_ENV=production
+
 CMD ["pnpm", "run", "start"]
