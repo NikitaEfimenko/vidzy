@@ -1,4 +1,5 @@
 'use client'
+
 import { generateDataUrl, getFileTypeByExtension } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import { FilePreview } from '@/shared/ui/file-preview'; // Предположим, что это ваш компонент FilePreview
@@ -36,36 +37,29 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
 
   const elems = register?.(name) ?? {};
 
-  // Функция для преобразования URL в File объект
-  const urlToFile = async (url: string, fileName: string): Promise<File> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new File([blob], fileName, { type: blob.type });
-  };
 
   const handleSelectAttachment = async (attachment: AttachmentsModelType) => {
-    if (attachment && attachment.fileUrl) {
+    if (typeof window === 'undefined') return;
+    
+    if (attachment?.fileUrl) {
       try {
-        // Преобразуем URL в File объект
-        const file = await urlToFile(attachment.fileUrl, attachment.fileName);
+        const response = await fetch(attachment.fileUrl);
+        const blob = await response.blob();
+        const file = new File([blob], attachment.fileName, { type: blob.type });
 
-        // Генерируем data URL для превью
         generateDataUrl(file, setDataUrl);
-        const type = getFileTypeByExtension(attachment.fileName);
-        setFileType(type);
+        setFileType(getFileTypeByExtension(attachment.fileName));
 
-        // Вызываем onChange из register с File объектом
         if (elems?.onChange) {
-          const fakeEvent = {
+          elems.onChange({
             target: {
               value: file,
               name: elems.name,
             },
-          };
-          elems.onChange(fakeEvent);
+          });
         }
       } catch (error) {
-        console.error('Error converting URL to File:', error);
+        console.error('Error:', error);
       }
       setIsDialogOpen(false);
     }
