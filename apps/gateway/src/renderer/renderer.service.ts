@@ -172,7 +172,7 @@ export class RenderService {
         ignoreCertificateErrors: true,
         enableMultiProcessOnLinux: false,
         disableWebSecurity: true,
-        gl: "angle-egl" 
+        // gl: "angle-egl" 
       },
     });
   }
@@ -191,7 +191,7 @@ export class RenderService {
         enableMultiProcessOnLinux: false,
         ignoreCertificateErrors: true,
         disableWebSecurity: true,
-        gl: "angle-egl",
+        // gl: "angle-egl",
       },
       concurrency: 1,
       inputProps,

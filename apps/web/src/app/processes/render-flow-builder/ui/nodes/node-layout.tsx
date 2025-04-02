@@ -29,7 +29,10 @@ export const NodeLayout = ({
 
   return (
 
-    <Card className={cn("bg-accent relative border max-w-[400px] px-0", className)}>
+    <Card className={cn("bg-accent relative border max-w-[400px] px-0", className)}
+    onPointerDown={(e) => e.stopPropagation()}
+    onDragStart={(e) => e.preventDefault()}
+    >
       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
         <Button className="rounded-full" size="icon" variant="default" onClick={handleForceRerender}>
           <RefreshCwIcon size={16} />
@@ -46,7 +49,8 @@ export const NodeLayout = ({
           {descriptionSlot}
         </CardDescription>
       </CardHeader>
-      <CardContent key={renderKey}>
+      <CardContent className="!overflow-auto"
+        key={renderKey}>
         {children}
       </CardContent>
     </Card>
