@@ -42,12 +42,12 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
-    {
-      title: "Overview",
-      url: "/renderer",
-      icon: LayoutDashboardIcon,
-      items: []
-    },
+    // {
+    //   title: "Overview",
+    //   url: "/renderer",
+    //   icon: LayoutDashboardIcon,
+    //   items: []
+    // },
     {
       title: "Render workflows",
       url: "/visual-renderer",

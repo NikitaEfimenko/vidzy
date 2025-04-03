@@ -98,7 +98,7 @@ export class VoiceService {
 
   async transcribe(file: Express.Multer.File, userId: string): Promise<any> {
     const VOICE_SERVICE_HOST = this.configService.get<string>('VOICE_SERVICE_HOST');
-
+    console.log(file)
     // Шаг 1: Отправляем файл на транскрибацию и получаем task_id
     const formData = new FormData();
     formData.append('file', Buffer.from(file.buffer), {

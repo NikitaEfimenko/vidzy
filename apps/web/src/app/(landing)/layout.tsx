@@ -93,7 +93,7 @@ export default async function RootLayout({
               expiredFallback={<></>}
               noAccessFallback={<></>}
             >
-              <Link href="/renderer">
+              <Link href="/visual-renderer">
                 <Button size="sm" variant="default">
                   Dashboard<MdDashboard />
                 </Button>

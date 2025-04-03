@@ -88,7 +88,6 @@ export const WorkflowPlayground = ({
     }
   }, [flowData])
 
-  console.log(flowData)
 
   const onDragOver = (event: any) => {
     event.preventDefault()
@@ -130,7 +129,7 @@ export const WorkflowPlayground = ({
         </Card>
       </Panel>
       {minimap && <MiniMap />}
-      <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+      <Background variant={BackgroundVariant.Dots} gap={24} size={2} />
     </ReactFlow>
   );
 }

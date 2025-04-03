@@ -36,11 +36,10 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
   };
 
   const elems = register?.(name) ?? {};
-
+  console.log(elems)
 
   const handleSelectAttachment = async (attachment: AttachmentsModelType) => {
     if (typeof window === 'undefined') return;
-    
     if (attachment?.fileUrl) {
       try {
         const response = await fetch(attachment.fileUrl);
@@ -50,13 +49,17 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
         generateDataUrl(file, setDataUrl);
         setFileType(getFileTypeByExtension(attachment.fileName));
 
-        if (elems?.onChange) {
-          elems.onChange({
-            target: {
-              value: file,
-              name: elems.name,
-            },
-          });
+        if (fileInput.current) {
+          // Создаём новый FileList
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          fileInput.current.files = dataTransfer.files;
+  
+          // Вызываем onChange, имитируя событие
+          const fakeEvent = {
+            target: fileInput.current,
+          };
+          elems?.onChange?.(fakeEvent);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -157,6 +160,7 @@ export const FileInputUrl: React.FC<FileInputProps> = ({ defaultValue, name, reg
             withRemove={false}
             withCurrentUser
             handleSelect={attachment => {
+              console.log("kek")
               if (attachment && attachment.fileUrl) {
                 setFileType(getFileTypeByExtension(attachment.fileName))
                 setDataUrl(attachment.fileUrl)

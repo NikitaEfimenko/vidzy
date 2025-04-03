@@ -47,7 +47,7 @@ export default async function HomePage() {
                 Get Started
               </Button>
             }
-          /> : <Link href="/renderer">
+          /> : <Link href="/visual-renderer">
             <Button size="lg" className="flex items-center gap-2">
               Get Started
             </Button>
@@ -90,7 +90,7 @@ export default async function HomePage() {
                   Login with Procat
                 </Button>
               }
-            /> : <Link href="/renderer">
+            /> : <Link href="/visual-renderer">
               <Button variant="secondary" className="flex items-center gap-2">
                 <MdDashboard size={18} />
                 Dashboard

@@ -49,7 +49,7 @@ export const NodeLayout = ({
           {descriptionSlot}
         </CardDescription>
       </CardHeader>
-      <CardContent className="!overflow-auto"
+      <CardContent className="overflow-auto nopan nodrag nowheel" style={{pointerEvents: 'all'}}
         key={renderKey}>
         {children}
       </CardContent>

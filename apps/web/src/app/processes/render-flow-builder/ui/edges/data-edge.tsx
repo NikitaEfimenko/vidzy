@@ -123,10 +123,7 @@ export function DataMapper<T extends Node>({
   const targetNode = useStore((state) => state.nodeLookup.get(target));
 
   // Локальное состояние для маппингов
-  console.log(data, "edge data")
   const [localMappings, setLocalMappings] = useState<Mapping[]>(data.mappings || []);
-  console.log(sourceNode, "source")
-  console.log(targetNode, "target")
   const {
     sourceValue,
     sourceSchema,
@@ -160,7 +157,7 @@ export function DataMapper<T extends Node>({
   }, [flowInstance, id]);
 
   useEffect(() => {
-    console.log(deferededInput, targetNode?.id, localMappings, sourceSchema, targetSchema, "useeffect")
+
     if (targetNode?.id && localMappings && sourceSchema && targetSchema) {
       try {
         const newData = transformData(deferededInput, sourceSchema, targetSchema, localMappings);
@@ -172,7 +169,6 @@ export function DataMapper<T extends Node>({
           })
         );
       } catch (e) {
-        console.log("error!!!", String(e))
         toast.error(String(e));
       }
     }

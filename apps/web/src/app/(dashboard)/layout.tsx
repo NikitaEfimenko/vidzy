@@ -49,18 +49,18 @@ export const metadata: Metadata = {
 };
 
 const expiredFallback = <div className="flex-1 h-full flex items-center justify-center">
-  <Link href="/prices">
+  <Link href={`${process.env.PROCAT_ID_HOST!}/clients/to/${process.env.PROCAT_CLIENT_ID!}`}>
     <Button size="lg"><Sparkle />Upgrade subscription</Button>
   </Link>
 </div>
 
 const notAccessFallback = <div className="flex-1  h-full flex items-center justify-center">
-  <Link href="/prices">
+  <Link href={`${process.env.PROCAT_ID_HOST!}/clients/to/${process.env.PROCAT_CLIENT_ID!}`}>
     <Button size="lg"><Sparkle />Get access</Button>
   </Link>
 </div>
 
-const sidebarAccessFallback = <Link href='/prices'>
+const sidebarAccessFallback = <Link href={`${process.env.PROCAT_ID_HOST!}/clients/to/${process.env.PROCAT_CLIENT_ID!}`}>
   <Button variant="outline" size="lg" className="w-full">
     <Sparkle />
     Upgrade to Pro
@@ -89,10 +89,16 @@ export default async function RootLayout({
           <SidebarProvider>
             <AppSidebar
               user={<UserAvatar />}
-              pro={<Guard level="Базовая подписка Vidzy"
+              // pro={<Guard level="Базовая подписка Vidzy"
+              //   noAccessFallback={sidebarAccessFallback}
+              //   expiredFallback={sidebarAccessFallback}
+              // ></Guard>}
+              pro={
+                <Guard level="Pro подписка Vidzy"
                 noAccessFallback={sidebarAccessFallback}
                 expiredFallback={sidebarAccessFallback}
-              ></Guard>}
+              ></Guard>
+              }
             />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2">
