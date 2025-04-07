@@ -36,7 +36,6 @@ export const FileInput: React.FC<FileInputProps> = ({ name, register, errors }) 
   };
 
   const elems = register?.(name) ?? {};
-  console.log(elems)
 
   const handleSelectAttachment = async (attachment: AttachmentsModelType) => {
     if (typeof window === 'undefined') return;
@@ -160,7 +159,6 @@ export const FileInputUrl: React.FC<FileInputProps> = ({ defaultValue, name, reg
             withRemove={false}
             withCurrentUser
             handleSelect={attachment => {
-              console.log("kek")
               if (attachment && attachment.fileUrl) {
                 setFileType(getFileTypeByExtension(attachment.fileName))
                 setDataUrl(attachment.fileUrl)

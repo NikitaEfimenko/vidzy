@@ -19,6 +19,7 @@ import { AudioViz } from "../components/audio-viz";
 import { Slide } from "../components/slide";
 import { PaginatedSubtitles } from "../components/subtitles";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
+import { ExtendedSlide, MediaType } from "../components/extended-slide";
 
 export const StorySchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
@@ -26,6 +27,8 @@ export const StorySchema = BaseSceneSchema.extend({
   audioFileName: z.string().url().describe("url").optional(),
   coverImgFileName: z.array(z
     .string().url().describe("url")),
+  // fragmentsUrls: z.array(z
+  //   .string().url().describe("url")),
   waveColor: zColor(),
   subtitlesTextColor: zColor(),
   subtitlesLinePerPage: z.number().int().min(0),
@@ -46,6 +49,7 @@ export const StoryComposition = ({
   subtitlesFileName,
   audioFileName,
   coverImgFileName,
+  // fragmentsUrls,
   subtitlesTextColor,
   subtitlesLinePerPage,
   waveColor,
@@ -108,6 +112,38 @@ export const StoryComposition = ({
             </Sequence>
           );
         })}
+        {/* {coverImgFileName.map((mediaSrc, index) => {
+          const startFrame = index * (slideDuration + overlapFrames);
+          const endFrame = startFrame + slideDuration + overlapFrames;
+
+          const extension = mediaSrc.split('.').pop()?.toLowerCase();
+          let mediaType: MediaType = 'image';
+          if (extension === 'mp4' || extension === 'mov') {
+            mediaType = 'video';
+          } else if (extension === 'gif') {
+            mediaType = 'gif';
+          }
+
+          return (
+            <Sequence
+              key={mediaSrc}
+              from={startFrame - audioOffsetInFrames}
+              durationInFrames={slideDuration + 1.5 * overlapFrames}
+            >
+              <ExtendedSlide
+                mediaSrc={mediaSrc}
+                mediaType={mediaType}
+                startFrame={startFrame}
+                endFrame={endFrame}
+                fps={fps}
+                overlapFrames={overlapFrames}
+              // Для видео можно добавить дополнительные параметры:
+              // videoStartFrom={5} // начать с 5 секунды
+              // videoEndAt={10} // закончить на 10 секунде
+              />
+            </Sequence>
+          );
+        })} */}
       </AbsoluteFill>
       <AbsoluteFill>
         <Sequence from={-audioOffsetInFrames}>
@@ -181,6 +217,7 @@ export const initInputProps = {
   waveNumberOfSamples: "256" as const,
   mirrorWave: true,
   format: "1:1" as const,
+  // fragmentsUrls: [],
 } satisfies z.infer<typeof StorySchema>
 
 export const FPS = 30
@@ -206,7 +243,7 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySc
       ...props,
     },
     abortSignal: new AbortController().signal,
-    defaultProps: {...initInputProps, ...props},
+    defaultProps: { ...initInputProps, ...props },
     fps: FPS,
     ...formatValues
   };

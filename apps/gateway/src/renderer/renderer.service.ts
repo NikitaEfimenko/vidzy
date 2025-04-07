@@ -30,59 +30,57 @@ export class RenderService {
       this.processKey(key, value, result);
     }
   
-    // Пост-обработка: преобразуем объекты с числовыми ключами в массивы
     return this.convertNumberKeysToArrays(result);
-  }
-  
-  private processKey(fullKey: string, value: any, targetObj: Record<string, any>) {
+}
+
+private processKey(fullKey: string, value: any, targetObj: Record<string, any>) {
     const parts = fullKey.split('.');
     let current = targetObj;
   
     for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      const isLast = i === parts.length - 1;
-      const nextPart = parts[i + 1];
-      const isNextNumber = !isNaN(parseInt(nextPart));
-  
-      if (isLast) {
-        current[part] = value;
-      } else {
-        if (!current[part]) {
-          // Создаем объект или массив в зависимости от следующей части
-          current[part] = isNextNumber ? {} : [];
+        const part = parts[i];
+        const isLast = i === parts.length - 1;
+        
+        if (isLast) {
+            current[part] = value;
+        } else {
+            if (!current[part]) {
+                // Всегда создаем объект для промежуточных уровней
+                current[part] = {};
+            }
+            current = current[part];
         }
-        current = current[part];
-      }
     }
-  }
-  
-  private convertNumberKeysToArrays(obj: any): any {
+}
+
+private convertNumberKeysToArrays(obj: any): any {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+    
     if (Array.isArray(obj)) {
-      return obj.map(item => this.convertNumberKeysToArrays(item));
+        return obj.map(item => this.convertNumberKeysToArrays(item));
     }
-  
-    if (typeof obj === 'object' && obj !== null) {
-      // Проверяем, все ли ключи - числа (тогда это массив)
-      const keys = Object.keys(obj);
-      const allKeysAreNumbers = keys.every(k => !isNaN(parseInt(k)));
-  
-      if (allKeysAreNumbers && keys.length > 0) {
-        // Сортируем по числовым ключам и преобразуем в массив
-        return keys
-          .sort((a, b) => parseInt(a) - parseInt(b))
-          .map(k => this.convertNumberKeysToArrays(obj[k]));
-      }
-  
-      // Рекурсивно обрабатываем обычные объекты
-      const result: Record<string, any> = {};
-      for (const [key, val] of Object.entries(obj)) {
+    
+    // Проверяем, все ли ключи числовые (для преобразования в массив)
+    const keys = Object.keys(obj);
+    if (keys.length > 0 && keys.every(k => /^\d+$/.test(k))) {
+        const array = [] as any;
+        const sortedKeys = keys.map(Number).sort((a, b) => a - b);
+        
+        for (const key of sortedKeys) {
+            array[key] = this.convertNumberKeysToArrays(obj[key.toString()]);
+        }
+        return array;
+    }
+    
+    // Рекурсивно обрабатываем обычные объекты
+    const result: Record<string, any> = {};
+    for (const [key, val] of Object.entries(obj)) {
         result[key] = this.convertNumberKeysToArrays(val);
-      }
-      return result;
     }
-  
-    return obj;
-  }
+    return result;
+}
 
   async getCompositions(): Promise<{ message: string }> {
     return { message: 'pong\n' };
@@ -97,6 +95,7 @@ export class RenderService {
     // Step 2: Select the composition
     const normalizedInputProps = this.normalizeFormData(inputProps);
     console.log("Step 2: Select the composition")
+    console.log(normalizedInputProps, inputProps)
     const composition = await this.selectComposition(bundled, compositionId, normalizedInputProps);
 
     // Step 3: Render the media file
@@ -172,7 +171,7 @@ export class RenderService {
         ignoreCertificateErrors: true,
         enableMultiProcessOnLinux: false,
         disableWebSecurity: true,
-        // gl: "angle-egl" 
+        gl: "angle-egl" 
       },
     });
   }
@@ -188,10 +187,10 @@ export class RenderService {
       },
       outputLocation,
       chromiumOptions: {
-        enableMultiProcessOnLinux: false,
+        enableMultiProcessOnLinux: true,
         ignoreCertificateErrors: true,
         disableWebSecurity: true,
-        // gl: "angle-egl",
+        gl: "angle-egl",
       },
       concurrency: 1,
       inputProps,

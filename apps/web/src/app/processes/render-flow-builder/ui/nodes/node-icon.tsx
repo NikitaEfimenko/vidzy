@@ -5,6 +5,7 @@ import {
   BookMarkedIcon,
   FileIcon,
   FileJson2Icon,
+  FormInputIcon,
   ImageIcon,
   MapIcon,
   Sticker,
@@ -33,6 +34,7 @@ export const NodeIcon = ({
       case "previewer": return VideoIcon
       case "transcribe-injector": return SubtitlesIcon
       case "ai-helper": return FaRobot
+      case "form-builder": return FormInputIcon
       default: return Workflow
     }
   }, [nodeType])

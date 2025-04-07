@@ -39,7 +39,6 @@ export class WorkflowsController {
 
   @Post('invites/:token/accept')
   acceptInvite(@Param('token') token: string, @Body() { userId }: {userId: string}) {
-    console.log(userId, "console!!")
     return this.workflowsService.acceptInvite(token, userId);
   }
 

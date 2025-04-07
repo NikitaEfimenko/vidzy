@@ -20,6 +20,7 @@ export const renderVideoAction = async (
     inputProps: JSON.stringify(formData),
     compositionId
   }
+  console.log(d)
   const session = await auth()
   if (!session?.user) return {
     isSuccess: false,
@@ -28,6 +29,7 @@ export const renderVideoAction = async (
   }
   const parsed = RenderVideoDtoSchema.safeParse(d)
   if (!parsed.success) {
+    console.log(parsed.error, "error!!")
     return {
       url: null,
       isSuccess: false,

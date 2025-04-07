@@ -159,6 +159,7 @@ export function DataMapper<T extends Node>({
   useEffect(() => {
 
     if (targetNode?.id && localMappings && sourceSchema && targetSchema) {
+      console.log(deferededInput, sourceSchema, targetSchema, localMappings, "kek")
       try {
         const newData = transformData(deferededInput, sourceSchema, targetSchema, localMappings);
         flowInstance.updateNodeData(

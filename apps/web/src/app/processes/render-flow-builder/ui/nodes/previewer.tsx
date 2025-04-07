@@ -31,7 +31,7 @@ export const PreviewerNode = ({ data, id }: NodeProps<Previewer>) => {
       }),
       compositionName: compName
     }))
-  }, [compName, flowInstance, conf?.schema])
+  }, [compName, flowInstance, JSON.stringify(conf?.schema)])
 
   return <NodeLayout
     className="min-w-[680px]"

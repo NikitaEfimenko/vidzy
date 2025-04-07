@@ -5,6 +5,7 @@ import { AttachmentsService } from 'src/attachments/attachments.service';
 import { Readable } from 'stream';
 import { GenerateVoiceDto } from './dto/generate-voice.dto';
 import AdmZip from "adm-zip"
+import { Multer } from 'multer';
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

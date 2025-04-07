@@ -34,6 +34,9 @@ export const nodeContextSchema = {
   "ai-helper": {
     title: "AIHelper",
   },
+  "form-builder": {
+    title: "FormBuilder",
+  },
 
 } satisfies Record<CustomNodeType, Content>
 

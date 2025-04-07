@@ -74,6 +74,7 @@ export const updateWorkflowAction = async (
   }
   try {
     const host = process.env?.RENDERER_HOST!
+
     const res = await fetch(`${host}/workflows/${id}`, {
       method: "PATCH",
       body: JSON.stringify({

@@ -2,6 +2,7 @@
 import * as StoryScene from "./story-scene"
 import * as QuizScene from "./quiz-scene"
 import * as CubesScene from "./cubes-physics"
+import * as CompositorScene from "./compositor-scene"
 
 export const scenes = [
   {
@@ -27,5 +28,13 @@ export const scenes = [
     config: CubesScene.config,
     initInputProps: CubesScene.initInputProps,
     calculateMetadata: CubesScene.calculateMetadata
+  },
+  {
+    composition: CompositorScene.CompositorScene,
+    schema: CompositorScene.CompositorSchema,
+    compositionName: CompositorScene.compositionName,
+    config: CompositorScene.config,
+    initInputProps: CompositorScene.initInputProps,
+    calculateMetadata: CompositorScene.calculateMetadata
   }
 ]

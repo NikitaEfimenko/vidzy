@@ -175,13 +175,11 @@ const FormElement: FC<{
   trigger: any;
   defaultValues: Partial<Record<any, any>>;
 }> = ({ keyName, schema, register, errors, control, setValue, trigger, defaultValues }) => {
-  console.log(schema, "schema!")
   if (schema.description === "File") {
     return <FileInput key={keyName} name={keyName} register={register} errors={errors} />;
   }
   if (schema.description === "url") {
     // Bug defaultValues?.[keyName] must be full path selector
-    console.log(keyName)
     return <FileInputUrl defaultValue={getValueByPath(defaultValues, keyName)} key={keyName} name={keyName} register={register} errors={errors} />;
   }
 
@@ -259,7 +257,7 @@ const FormElement: FC<{
       <div key={keyName}>
         <fieldset>
           <legend>{keyName}</legend>
-          {Object.entries(schema.shape).map(([subKey, subSchema]) => (
+          {Object.entries(schema.shape ?? {}).map(([subKey, subSchema]) => (
             <FormElement
               key={subKey}
               keyName={`${keyName}.${subKey}`}
@@ -340,7 +338,7 @@ type FormGeneratorProviderProps<T> = {
 } & GeneratorMainProps
 
 export const FormGeneratorProvider = memo(({ onResult, onChange, serverAction, schema, children, defaultValues }: FormGeneratorProviderProps<any>) => {
-  const methods = useForm({
+  const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues,
     mode: "all"
@@ -382,7 +380,7 @@ export const FormGeneratorProvider = memo(({ onResult, onChange, serverAction, s
 
 
 export const FormNoActionGeneratorProvider = memo(({ onResult, onChange, schema, children, defaultValues }: Omit<FormGeneratorProviderProps<any>, "serverAction">) => {
-  const methods = useForm({
+  const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues,
     mode: "all"
@@ -390,7 +388,7 @@ export const FormNoActionGeneratorProvider = memo(({ onResult, onChange, schema,
 
   useEffect(() => {
     methods.reset(defaultValues)
-  }, [methods.reset, defaultValues])
+  }, [methods.reset, JSON.stringify(defaultValues)])
 
   const { register, trigger, reset, handleSubmit, formState: { errors, isValid }, control, getValues, watch } = methods;
   const formRef = useRef<HTMLFormElement>(null)
@@ -416,7 +414,7 @@ export const FormGeneratorBody = ({ schema }: GeneratorMainProps) => {
   const form = useFormContext<z.infer<typeof schema>>();
   return (
     <div className="flex flex-col gap-3">
-      {Object.entries(schema.shape).map(([key, subSchema]) => (
+      {Object.entries(schema.shape ?? {}).map(([key, subSchema]) => (
         <FormElement
           keyName={key}
           schema={subSchema as ZodTypeAny}
@@ -463,11 +461,11 @@ export const FormGeneratorControls = ({
   const { pending } = useFormStatus()
   const errors = Object.values(form.formState.errors)
   const watchedValues = form.watch();
-  console.log(watchedValues, "values from controls")
+  // console.log(watchedValues, "values from controls")
 
   return <div className="flex items-center gap-2 mt-3">
     {pending && <div className="flex items-center gap-2"><div>{pendingSlot}</div><Loader className="animate-spin"/></div>}
-    {!noUpdater && <Button onClick={() => onChange?.(watchedValues)} variant="secondary" disabled={pending || errors.length > 0} type="button">Update</Button>}
+    {!noUpdater && <Button onClick={() => onChange?.(watchedValues)} variant={noAction ? "default": "secondary"} disabled={pending || errors.length > 0} type="button">Update</Button>}
     {!noAction && <Button disabled={pending || errors.length > 0} type="submit">Do action</Button>}
   </div>
 }

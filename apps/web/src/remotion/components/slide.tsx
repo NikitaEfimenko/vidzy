@@ -2,6 +2,7 @@
 import React from "react";
 
 import {
+  AnimatedImage,
   Easing,
   Img,
   interpolate,
@@ -51,12 +52,13 @@ export const Slide: React.FC<SlideProps> = ({ img, startFrame, endFrame, overlap
         transition: 'opacity 0.5s ease, transform 0.5s ease',
       }}
     >
-      <Img
+      <AnimatedImage
         src={img}
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          zIndex: '-1'
         }}
       />
     </div>

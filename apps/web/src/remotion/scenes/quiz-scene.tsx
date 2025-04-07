@@ -12,9 +12,9 @@ export const QuizSchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
   delayBeforeNextQuestion: z.number().min(0),
   beforeQuizDelayInFrames: z.number().min(0),
-  audioFileName: z.string().optional(),
+  audioFileName: z.string().describe("url").optional(),
   coverImgFileName: z.array(z
-    .string()),
+    .string().describe("url")),
   audioWizEnabled: z.boolean(),
 
   questions: z.array(z.string()).min(0),

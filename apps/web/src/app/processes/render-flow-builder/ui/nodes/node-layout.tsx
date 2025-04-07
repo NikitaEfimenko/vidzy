@@ -12,6 +12,7 @@ type NodeLayoutProps = {
   descriptionSlot?: ReactElement,
   handlersSlot?: ReactElement,
   className?: string
+  onRefresh?: () => void
 }
 
 export const NodeLayout = ({
@@ -19,11 +20,15 @@ export const NodeLayout = ({
   titleSlot,
   descriptionSlot,
   handlersSlot,
-  className
+  className,
+  onRefresh
 }: NodeLayoutProps) => {
   const [renderKey, setRenderKey] = useState(0);
 
   const handleForceRerender = () => {
+    if (onRefresh) {
+      onRefresh()
+    }
     setRenderKey(prevKey => prevKey + 1);
   };
 

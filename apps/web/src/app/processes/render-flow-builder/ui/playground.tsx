@@ -43,7 +43,7 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
  
  
 const onNodeDrag: OnNodeDrag = (_, node) => {
-  console.log('drag event', node.data);
+  // console.log('drag event', node.data);
 };
  
 export const WorkflowPlayground = ({
@@ -67,13 +67,25 @@ export const WorkflowPlayground = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
+      const { source, target } = connection;
+      const nodes = service.flowInstance.getNodes(); // Получаем текущие узлы
+  
+      // Находим исходный узел (source)
+      const sourceNode = nodes.find((node) => node.id === source);
+  
+      // Определяем тип ребра:
+      // Если sourceNode.type === 'form-builder', то 'editable', иначе 'mapper'
+      const edgeType = sourceNode?.type === "form-builder" ? 'editable' : 'mapper';
+  
       const newEdge = {
         ...connection,
+        type: edgeType, // Присваиваем тип
         data: {
           ...connection,
-          key: crypto.randomUUID(), // Генерация уникального UUID
+          key: crypto.randomUUID(),
         },
       };
+  
       service.setEdges((eds) => addEdge(newEdge, eds));
     },
     [service],
