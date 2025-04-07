@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 import { AttachmentsModelType } from "../dto/model"
 import { db } from "@/app/config/db"
 import { attachments, fileTypeEnum } from "@vidzy/database"
-import { eq, and } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 
 type FormState = {
   url: string | null,
@@ -131,7 +131,11 @@ export async function getAttachments({
   if (fileType) conditions.push(eq(attachments.fileType, fileType));
   if (showPublic) conditions.push(eq(attachments.public, showPublic));
 
-  let base = db.select().from(attachments).offset(page * pageSize).limit(pageSize);
+  let base = db.select()
+    .from(attachments)
+    .orderBy(desc(attachments.createdAt))
+    .offset(page * pageSize)
+    .limit(pageSize);
 
   if (conditions.length > 0) {
     const list = await base.where(and(...conditions)).execute()

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/shared/ui/separator";
 import { Textarea } from "@/shared/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader, MinusIcon, PlusIcon } from "lucide-react";
+import { ListCollapseIcon, Loader, MinusIcon, PlusIcon } from "lucide-react";
 import { FC, memo, ReactElement, ReactNode, useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { z, ZodTypeAny } from "zod";
 import { FileInput, FileInputUrl } from "./file-input";
 import { getValueByPath } from "@/shared/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
 
 
 // const renderFormElement = (
@@ -224,14 +225,14 @@ const FormElement: FC<{
       <div key={keyName}>
         <label>{keyName}</label>
         <Select {...utils} onValueChange={v => {
-           const fakeEvent = {
+          const fakeEvent = {
             target: {
               value: v,
               name: utils?.name,
             },
           };
           utils?.onChange(fakeEvent)
-          }} defaultValue={getValueByPath(defaultValues, keyName)}>
+        }} defaultValue={getValueByPath(defaultValues, keyName)}>
           <SelectTrigger>
             <SelectValue placeholder="Select value" />
           </SelectTrigger>
@@ -254,24 +255,36 @@ const FormElement: FC<{
 
   if (schema instanceof z.ZodObject) {
     return (
-      <div key={keyName}>
-        <fieldset>
-          <legend>{keyName}</legend>
-          {Object.entries(schema.shape ?? {}).map(([subKey, subSchema]) => (
-            <FormElement
-              key={subKey}
-              keyName={`${keyName}.${subKey}`}
-              schema={subSchema as ZodTypeAny}
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-              trigger={trigger}
-              defaultValues={defaultValues}
-            />
-          ))}
-        </fieldset>
-      </div>
+      // <Accordion type="single" collapsible defaultChecked={false} className="w-full">
+        // {/* <AccordionItem value={keyName}> */}
+          <div key={keyName}>
+            <fieldset>
+              <legend>{keyName}</legend>
+              {/* <AccordionContent> */}
+                {Object.entries(schema.shape ?? {}).map(([subKey, subSchema]) => (
+                  <FormElement
+                    key={subKey}
+                    keyName={`${keyName}.${subKey}`}
+                    schema={subSchema as ZodTypeAny}
+                    register={register}
+                    errors={errors}
+                    control={control}
+                    setValue={setValue}
+                    trigger={trigger}
+                    defaultValues={defaultValues}
+                  />
+                ))}
+              {/* </AccordionContent> */}
+            </fieldset>
+            {/* <div className="flex items-center justify-center">
+              <Button type="button" className="w-fit" variant="outline">
+                <AccordionTrigger className="flex items-stretch w-full h-full">
+                </AccordionTrigger>
+              </Button>
+            </div> */}
+          </div>
+        // {/* </AccordionItem> */}
+      // {/* </Accordion> */}
     );
   }
 
@@ -291,6 +304,7 @@ const ArrayField: FC<{
   const { fields, append, remove } = useFieldArray({ control, name: keyName });
 
   return (
+
     <div key={keyName} className="py-3 flex flex-col gap-4">
       <Separator />
       <div className="flex items-center gap-2">
@@ -299,6 +313,7 @@ const ArrayField: FC<{
           <PlusIcon /> Add
         </Button>
       </div>
+
       {fields.map((item, index) => (
         <div key={item.id} className="mt-2">
           <div className="flex items-center">
@@ -456,7 +471,7 @@ export const FormGeneratorControls = ({
   pendingSlot,
   noAction = false,
   noUpdater = false
-}: GeneratorMainProps & {noAction?: boolean, noUpdater?: boolean}) => {
+}: GeneratorMainProps & { noAction?: boolean, noUpdater?: boolean }) => {
   const form = useFormContext<z.infer<typeof schema>>()
   const { pending } = useFormStatus()
   const errors = Object.values(form.formState.errors)
@@ -464,8 +479,8 @@ export const FormGeneratorControls = ({
   // console.log(watchedValues, "values from controls")
 
   return <div className="flex items-center gap-2 mt-3">
-    {pending && <div className="flex items-center gap-2"><div>{pendingSlot}</div><Loader className="animate-spin"/></div>}
-    {!noUpdater && <Button onClick={() => onChange?.(watchedValues)} variant={noAction ? "default": "secondary"} disabled={pending || errors.length > 0} type="button">Update</Button>}
+    {pending && <div className="flex items-center gap-2"><div>{pendingSlot}</div><Loader className="animate-spin" /></div>}
+    {!noUpdater && <Button onClick={() => onChange?.(watchedValues)} variant={noAction ? "default" : "secondary"} disabled={pending || errors.length > 0} type="button">Update</Button>}
     {!noAction && <Button disabled={pending || errors.length > 0} type="submit">Do action</Button>}
   </div>
 }

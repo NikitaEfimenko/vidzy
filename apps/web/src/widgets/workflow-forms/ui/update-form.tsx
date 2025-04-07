@@ -45,7 +45,7 @@ export const UpdateWorkflowFormProvider: FC<UpdateWorkflowFormProviderProps> = (
   })
 
   useEffect(() => {
-    if (state.isSuccess) {
+    if (state?.isSuccess) {
       toast("Update worfklow", {
         description: state.issues
       })

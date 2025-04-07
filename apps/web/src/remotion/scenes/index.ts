@@ -3,6 +3,7 @@ import * as StoryScene from "./story-scene"
 import * as QuizScene from "./quiz-scene"
 import * as CubesScene from "./cubes-physics"
 import * as CompositorScene from "./compositor-scene"
+import * as DialogScene from "./dialog-scene"
 
 export const scenes = [
   {
@@ -36,5 +37,13 @@ export const scenes = [
     config: CompositorScene.config,
     initInputProps: CompositorScene.initInputProps,
     calculateMetadata: CompositorScene.calculateMetadata
+  },
+  {
+    composition: DialogScene.DialogComposition,
+    schema: DialogScene.DialogSchema,
+    compositionName: DialogScene.compositionName,
+    config: DialogScene.config,
+    initInputProps: DialogScene.initInputProps,
+    calculateMetadata: DialogScene.calculateMetadata
   }
 ]

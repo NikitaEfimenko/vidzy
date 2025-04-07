@@ -7,21 +7,32 @@ import {
   useCurrentFrame,
   interpolate,
   CalculateMetadataFunction,
-  Video
+  Video,
+  delayRender,
+  continueRender
 } from "remotion";
 import { z } from "zod";
 import { zColor } from "@remotion/zod-types";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 import { OffthreadVideo } from "remotion";
+import { useEffect, useRef, useState } from "react";
+import { PaginatedSubtitles } from "../components/subtitles";
 
 export const CompositorSchema = BaseSceneSchema.extend({
   audioFileName: z.string().url().describe("url").optional(),
+  subtitlesUrl: z.string().url().describe("url").optional(),
   audioVolume: z.number().min(0).max(100),
   videos: z.array(z.object({
     src: z.string().url().describe("url"),
     durationInSeconds: z.number().min(0),
     transitionDurationInSeconds: z.number().min(0).default(0)
   })),
+
+  subtitlesTextColor: zColor(),
+  subtitlesLinePerPage: z.number().int().min(0),
+  subtitlesLineHeight: z.number().int().min(0),
+  subtitlesZoomMeasurerSize: z.number().int().min(0),
+  onlyDisplayCurrentSentence: z.boolean(),
 });
 
 export type CompositorSchemaType = z.infer<typeof CompositorSchema>;
@@ -29,9 +40,34 @@ export const CompositorScene = ({
   audioFileName,
   audioVolume = 50,
   videos,
+
+  subtitlesUrl,
+  subtitlesTextColor,
+  subtitlesLinePerPage,
+  subtitlesZoomMeasurerSize,
+  subtitlesLineHeight,
+  onlyDisplayCurrentSentence,
 }: CompositorSchemaType) => {
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
+
+  const [handle] = useState(() => delayRender());
+  const [subtitles, setSubtitles] = useState<string | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    subtitlesUrl && fetch(subtitlesUrl, {
+    })
+      .then((res) => {
+        return res.text()
+      })
+      .then((text) => {
+        setSubtitles(text);
+        continueRender(handle);
+      })
+      .catch((err) => {
+        console.log("Error fetching subtitles", err);
+      });
+  }, [handle, subtitlesUrl]);
 
   let currentFrame = 0;
   const sequences = videos.map((video, index) => {
@@ -51,85 +87,113 @@ export const CompositorScene = ({
   });
 
   return (
-    <AbsoluteFill>
-      {audioFileName && (
-        <Audio
-          src={audioFileName}
-          volume={Math.max(0, Math.min(1, audioVolume / 100))}
-        />
-      )}
+    <div ref={ref}>
 
-      {sequences.map((seq, i) => {
-        const sequenceFrame = frame - seq.from;
-        const isActive = sequenceFrame >= 0 && sequenceFrame <= seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames);
 
-        if (!isActive) return null;
+      <AbsoluteFill>
+        {audioFileName && (
+          <Audio
+            src={audioFileName}
+            volume={Math.max(0, Math.min(1, audioVolume / 100))}
+          />
+        )}
 
-        const progress = sequenceFrame / seq.durationInFrames;
-        const transitionProgress = seq.isLast ? 0 :
-          Math.max(
-            0,
-            (progress - (1 - seq.transitionDurationInFrames / seq.durationInFrames)) *
-            (seq.durationInFrames / seq.transitionDurationInFrames)
-          );
+        {sequences.map((seq, i) => {
+          const sequenceFrame = frame - seq.from;
+          const isActive = sequenceFrame >= 0 && sequenceFrame <= seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames);
 
-        const fromOpacity = seq.isLast ? 1 : 1 - transitionProgress; // для первого видео
-        const toOpacity = transitionProgress; // для второго (в фоне muted)
-        const scale = 1 + 0.1 * transitionProgress;
+          if (!isActive) return null;
 
-        const currentVolume = seq.isLast
-          ? 1
-          : Math.max(0, 1 - transitionProgress);
+          const progress = sequenceFrame / seq.durationInFrames;
+          const transitionProgress = seq.isLast ? 0 :
+            Math.max(
+              0,
+              (progress - (1 - seq.transitionDurationInFrames / seq.durationInFrames)) *
+              (seq.durationInFrames / seq.transitionDurationInFrames)
+            );
 
-        const nextVolume = Math.max(0, transitionProgress);
+          const fromOpacity = seq.isLast ? 1 : 1 - transitionProgress; // для первого видео
+          const toOpacity = transitionProgress; // для второго (в фоне muted)
+          const scale = 1 + 0.1 * transitionProgress;
 
-        return (
-          <Sequence
-            key={i}
-            from={seq.from}
-            durationInFrames={seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames)}
-          >
-            <AbsoluteFill>
-              {/* ▶️ Основное видео (первое в паре) */}
-              <OffthreadVideo
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  mixBlendMode: 'screen',
-                  opacity: fromOpacity, // ← затухание
-                }}
-                volume={currentVolume}
-                src={seq.src}
-              />
-            </AbsoluteFill>
+          const currentVolume = seq.isLast
+            ? 1
+            : Math.max(0, 1 - transitionProgress);
 
-            {/* 🫥 Во время перехода: второе видео, но без звука */}
-            {!seq.isLast && (
-              <AbsoluteFill
-                style={{
-                  opacity: toOpacity,
-                  transform: `scale(${scale})`,
-                }}
-              >
+          const nextVolume = Math.max(0, transitionProgress);
+
+          return (
+            <Sequence
+              key={i}
+              from={seq.from}
+              durationInFrames={seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames)}
+            >
+              <AbsoluteFill>
+                {/* ▶️ Основное видео (первое в паре) */}
                 <OffthreadVideo
                   style={{
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
                     mixBlendMode: 'screen',
+                    opacity: fromOpacity, // ← затухание
                   }}
-                  src={sequences[i + 1].src}
-                  muted // важно!
-                  startFrom={0}
+                  volume={currentVolume}
+                  src={seq.src}
                 />
               </AbsoluteFill>
-            )}
-          </Sequence>
-        );
-      })}
 
-    </AbsoluteFill>
+              {/* 🫥 Во время перехода: второе видео, но без звука */}
+              {!seq.isLast && (
+                <AbsoluteFill
+                  style={{
+                    opacity: toOpacity,
+                    transform: `scale(${scale})`,
+                  }}
+                >
+                  <OffthreadVideo
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      mixBlendMode: 'screen',
+                    }}
+                    src={sequences[i + 1].src}
+                    muted // важно!
+                    startFrom={0}
+                  />
+                </AbsoluteFill>
+              )}
+            </Sequence>
+          );
+        })}
+
+      </AbsoluteFill>
+      <AbsoluteFill>
+        <Sequence>
+          <div
+            className="container relative flex flex-col justify-between"
+          >
+            <div
+              style={{ lineHeight: `${subtitlesLineHeight}px` }}
+              className="captions flex-1 text-center flex items-center justify-center"
+            >
+              {subtitles && <PaginatedSubtitles
+                subtitles={subtitles}
+                startFrame={0}
+                endFrame={durationInFrames}
+                linesPerPage={subtitlesLinePerPage}
+                subtitlesTextColor={subtitlesTextColor}
+                subtitlesZoomMeasurerSize={subtitlesZoomMeasurerSize}
+                subtitlesLineHeight={subtitlesLineHeight}
+                onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
+              />}
+            </div>
+          </div>
+        </Sequence>
+
+      </AbsoluteFill>
+    </div>
   );
 };
 
@@ -151,8 +215,13 @@ export const initInputProps = {
       transitionDurationInSeconds: 0,
     }
   ],
-  
-  format: "16:9"
+  format: "16:9",
+
+  onlyDisplayCurrentSentence: true,
+  subtitlesTextColor: "rgba(255, 255, 255, 1)",
+  subtitlesLinePerPage: 1,
+  subtitlesZoomMeasurerSize: 1,
+  subtitlesLineHeight: 120,
 } satisfies z.infer<typeof CompositorSchema>;
 
 
