@@ -16,6 +16,7 @@ import { z } from "zod";
 import { PaginatedSubtitles } from "../components/subtitles";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 import { Slide } from "../components/slide";
+import { SubtitleType } from "../components/captions";
 
 export const DialogSchema = BaseSceneSchema.extend({
   dialog: z.array(z.object({
@@ -31,6 +32,12 @@ export const DialogSchema = BaseSceneSchema.extend({
   subtitlesLineHeight: z.number().int().min(0),
   subtitlesZoomMeasurerSize: z.number().int().min(0),
   onlyDisplayCurrentSentence: z.boolean(),
+  captionType: z.enum([
+    SubtitleType.DEFAULT,
+    SubtitleType.GLITCH,
+    SubtitleType.LIGHTNING,
+    SubtitleType.TYPEWRITER,
+  ]),
 });
 
 export type DialogSchemaType = z.infer<typeof DialogSchema>;
@@ -50,6 +57,7 @@ const DialogMessage = ({
   subtitlesZoomMeasurerSize,
   subtitlesLineHeight,
   onlyDisplayCurrentSentence,
+  captionType = SubtitleType.DEFAULT
 }: {
   personName: string;
   positionPrority?: "left" | "right" | "center" | "top" | "bottom";
@@ -65,6 +73,7 @@ const DialogMessage = ({
   subtitlesZoomMeasurerSize: number;
   subtitlesLineHeight: number;
   onlyDisplayCurrentSentence: boolean;
+  captionType?: SubtitleType
 }) => {
   const [subtitles, setSubtitles] = useState<string | null>(null);
   const [handle] = useState(() => delayRender());
@@ -120,12 +129,13 @@ const DialogMessage = ({
                 src={avatarUrl}
                 className="w-14 h-14 rounded-full mr-3"
               />
-              <span className="text-white text-2xl font-bold">{personName}:</span>
+              <span className="text-white text-4xl font-bold" style={{ fontFamily: 'Courier New, monospace'}}>
+                {personName}:</span>
             </div>
           )}
-          <div className="bg-white h-[1px] w-full"></div>
+          {/* <div className="bg-white h-[1px] w-full"></div> */}
           {subtitles && (
-            <div className="text-white">
+            <div className="text-white py-3">
               <PaginatedSubtitles
                 subtitles={subtitles}
                 startFrame={startFrame}
@@ -135,6 +145,7 @@ const DialogMessage = ({
                 subtitlesZoomMeasurerSize={subtitlesZoomMeasurerSize}
                 subtitlesLineHeight={subtitlesLineHeight}
                 onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
+                captionType={captionType}
               />
             </div>
           )}
@@ -152,6 +163,7 @@ export const DialogComposition = ({
   subtitlesZoomMeasurerSize,
   subtitlesLineHeight,
   onlyDisplayCurrentSentence,
+  captionType = SubtitleType.DEFAULT
 }: DialogSchemaType) => {
   const { durationInFrames, fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -203,6 +215,7 @@ export const DialogComposition = ({
               subtitlesZoomMeasurerSize={subtitlesZoomMeasurerSize}
               subtitlesLineHeight={subtitlesLineHeight}
               onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
+              captionType={captionType}
             />
           </Sequence>
         ))}
@@ -221,6 +234,7 @@ export const initInputProps = {
   subtitlesZoomMeasurerSize: 1,
   subtitlesLineHeight: 120,
   format: "1:1" as const,
+  captionType: SubtitleType.DEFAULT
 } satisfies z.infer<typeof DialogSchema>;
 
 export const FPS = 30;

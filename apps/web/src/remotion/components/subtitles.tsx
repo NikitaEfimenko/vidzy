@@ -10,6 +10,8 @@ import {
 import { ensureFont } from "./ensure-font";
 import { msToFrame } from './utils';
 import { Word } from "./word";
+import { CaptionView } from './base-caption';
+import { SubtitleType } from './captions';
 
 const useWindowedFrameSubs = (
   src: string,
@@ -45,6 +47,7 @@ export const PaginatedSubtitles: React.FC<{
   readonly subtitlesZoomMeasurerSize: number;
   readonly subtitlesLineHeight: number;
   readonly onlyDisplayCurrentSentence: boolean;
+  readonly captionType?: SubtitleType
 }> = ({
   startFrame,
   endFrame,
@@ -54,6 +57,7 @@ export const PaginatedSubtitles: React.FC<{
   subtitlesLineHeight = 120,
   subtitlesZoomMeasurerSize = 1,
   onlyDisplayCurrentSentence = true,
+  captionType = SubtitleType.DEFAULT
 }) => {
   const frame = useCurrentFrame();
   const windowRef = useRef<HTMLDivElement>(null);
@@ -137,15 +141,25 @@ export const PaginatedSubtitles: React.FC<{
         ref={windowRef}
         style={{
           transform: `translateY(-${lineOffset * subtitlesLineHeight}px)`,
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "0.5em",
         }}
         
       >
         {currentFrameSentences.map((item) => (
           <span key={item.startMs + item.endMs} id={String(item.startMs + item.endMs)}>
-            <Word
+            {/* <Word
               frame={frame}
               item={item}
               transcriptionColor={transcriptionColor}
+            />{" "} */}
+            <CaptionView
+              frame={frame}
+              item={item}
+              transcriptionColor={transcriptionColor}
+              subtitleType={captionType}
             />{" "}
           </span>
         ))}

@@ -19,7 +19,6 @@ import { AudioViz } from "../components/audio-viz";
 import { Slide } from "../components/slide";
 import { PaginatedSubtitles } from "../components/subtitles";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
-import { ExtendedSlide, MediaType } from "../components/extended-slide";
 
 export const StorySchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
@@ -236,9 +235,9 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySc
     durationInSeconds = 10
   }
   return {
-    durationInFrames: Math.floor(
+    durationInFrames:  (durationInSeconds - props.audioOffsetInSeconds) > 0 ? Math.floor(
       (durationInSeconds - props.audioOffsetInSeconds) * FPS,
-    ),
+    ) : 1,
     props: {
       ...props,
     },

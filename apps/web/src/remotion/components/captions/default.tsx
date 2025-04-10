@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { interpolate, Easing } from 'remotion'; // Предположим, что вы используете Remotion
 import { Caption } from '@remotion/captions';
-import { msToFrame } from './utils';
-import { cn } from '../../shared/lib/utils';
+import { msToFrame } from '../utils';
+import { cn } from '../../../shared/lib/utils';
 
-export const Word: React.FC<{
+export const DefaultCaption: React.FC<{
   readonly item: Caption;
   readonly frame: number;
   readonly transcriptionColor?: string; // Формат: "rgba(0, 0, 200, 0.93)"
-}> = ({ item, frame, transcriptionColor = "rgba(255, 255, 255, 1)" }) => {
+}> = ({ item, frame, transcriptionColor = "rgba(255, 255, 255, 1)"}) => {
   
   // Анимация появления текста
   const opacity = interpolate(
@@ -88,10 +88,9 @@ export const Word: React.FC<{
     return {
       display: 'inline-block',
       opacity,
-
       translate: `0 ${translateY}em`,
       color: textColor, // Текущий цвет текста
-      padding: '1rem',
+      padding: '1em 0.5em',
       fontSize, // Текущий размер шрифта
       textStroke: `2px black`,
       WebkitTextStroke: `2px black`, // Для Safari и старых браузеров
@@ -102,7 +101,7 @@ export const Word: React.FC<{
 
   return (
     <span style={style}>
-      <span className={cn('font-bold text-shadow-xl py-1 px-3 shadow-black', badgeProgress > 0 && "rounded-lg bg-primary")}>
+      <span className={cn('font-bold text-shadow-xl py-1 px-2 shadow-black', badgeProgress > 0 && "rounded-lg bg-primary")}>
         {item.text}
       </span>
     </span>

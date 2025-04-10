@@ -43,6 +43,7 @@ export const FormBuilder = ({ id, data }: NodeProps<FormBuilder>) => {
       case "DialogScene": return DialogSchema.pick({
         "dialog": true,
         "format": true,
+        "captionType": true
       })
       case "PhysicsPreviewScene": return CubesSceneSchema
       case "QuizScene": return QuizSchema
