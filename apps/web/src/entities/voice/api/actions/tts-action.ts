@@ -61,3 +61,57 @@ export const generateTTSAction = async (
     }
   }
 }
+
+type BackgroundFormState = {
+  jobId?: string
+} & FormState
+
+export const generateTTSInBackgroundAction = async (
+  prevState: BackgroundFormState,
+  data: FormData 
+): Promise<BackgroundFormState> => {
+  const formData = Object.fromEntries(data)
+  const parsed = TTSDtoSchema.safeParse(formData)
+  const session = await auth()
+  if (!session?.user) return {
+    isSuccess: false,
+    issues: '401',
+    url: null
+  }
+  if (!parsed.success) {
+    return {
+      url: null,
+      isSuccess: false,
+      issues: parsed.error.message
+    }
+  }
+  try {
+    const renderHost = process.env?.RENDERER_HOST
+    const res = await fetch(`${renderHost}/jobs/tts`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${(session?.user as any).accessToken}`
+      },
+      body: JSON.stringify({
+        ...parsed.data,
+        userId: session.user.id
+      }),
+      credentials: "include",
+      mode: 'cors'
+    })
+    const resData = await res.json() as Partial<BackgroundFormState>
+
+    return {
+      url: resData.url ?? null,
+      jobId: resData.jobId ?? undefined,
+      isSuccess: true
+    }
+  } catch {
+    return {
+      url: null,
+      isSuccess: false,
+      jobId: undefined
+    }
+  }
+}

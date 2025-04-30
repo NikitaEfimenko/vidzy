@@ -19,6 +19,7 @@ import { AudioViz } from "../components/audio-viz";
 import { Slide } from "../components/slide";
 import { PaginatedSubtitles } from "../components/subtitles";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
+import { SubtitleType } from "../components/captions";
 
 export const StorySchema = BaseSceneSchema.extend({
   audioOffsetInSeconds: z.number().min(0),
@@ -38,6 +39,12 @@ export const StorySchema = BaseSceneSchema.extend({
   mirrorWave: z.boolean(),
   waveLinesToDisplay: z.number().int().min(0),
   waveFreqRangeStartIndex: z.number().int().min(0),
+  captionType: z.enum([
+    SubtitleType.DEFAULT,
+    SubtitleType.GLITCH,
+    SubtitleType.LIGHTNING,
+    SubtitleType.TYPEWRITER,
+  ]),
   waveNumberOfSamples: z.enum(["32", "64", "128", "256", "512"]),
 });
 
@@ -61,7 +68,8 @@ export const StoryComposition = ({
   mirrorWave,
   audioOffsetInSeconds,
   audioWizEnabled,
-  format
+  format,
+  captionType = SubtitleType.DEFAULT
 }: StorySchemaType) => {
   const { durationInFrames, fps } = useVideoConfig();
 
@@ -174,6 +182,7 @@ export const StoryComposition = ({
                 subtitlesZoomMeasurerSize={subtitlesZoomMeasurerSize}
                 subtitlesLineHeight={subtitlesLineHeight}
                 onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
+                captionType={captionType}
               />}
             </div>
           </div>
@@ -189,7 +198,7 @@ export const compositionName = "StoryScene" as const
 export const initInputProps = {
   // Audio settings
   audioOffsetInSeconds: 0,
-
+  captionType: SubtitleType.DEFAULT,
   // Title settings
   subtitlesFileName: "https://storage.procat-saas.online/vidzy/1743102783091-srt-1743102783090.srt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T191303Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d3308787f12dab6d14ebf1f4cc14964656152d0a4329e5348660e4cfe8bc769f",
   audioFileName: "https://storage.procat-saas.online/vidzy/1743103602387-agile.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250327%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250327T192643Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=03d8114318f1bbcf78b98e3d92c058be2557fcc5be47df6a6753c77dd45e1525",
@@ -235,7 +244,7 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof StorySc
     durationInSeconds = 10
   }
   return {
-    durationInFrames:  (durationInSeconds - props.audioOffsetInSeconds) > 0 ? Math.floor(
+    durationInFrames: (durationInSeconds - props.audioOffsetInSeconds) > 0 ? Math.floor(
       (durationInSeconds - props.audioOffsetInSeconds) * FPS,
     ) : 1,
     props: {

@@ -1,10 +1,9 @@
 'use client'
-import React from "react";
+import React, { useMemo } from "react";
 
 import {
   AnimatedImage,
   Easing,
-  Img,
   interpolate,
   useCurrentFrame
 } from "remotion";
@@ -15,12 +14,22 @@ export interface SlideProps {
   endFrame: number;
   fps: number;
   overlapFrames: number;
+  animateScale?: boolean;
+  animateOpacity?: boolean;
 }
 
-export const Slide: React.FC<SlideProps> = ({ img, startFrame, endFrame, overlapFrames, fps }) => {
+export const Slide: React.FC<SlideProps> = ({
+  img,
+  startFrame,
+  endFrame,
+  overlapFrames,
+  fps,
+  animateScale = true,
+  animateOpacity = true
+}) => {
   const frame = useCurrentFrame();
 
-  const opacity = interpolate(
+  const opacity = useMemo(() => animateOpacity ? interpolate(
     frame,
     [0, fps / 2, endFrame - startFrame - fps / 2 - overlapFrames, endFrame - startFrame],
     [0.2, 1, 1, 0.2],
@@ -28,9 +37,9 @@ export const Slide: React.FC<SlideProps> = ({ img, startFrame, endFrame, overlap
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     }
-  );
+  ): 1, [[endFrame, startFrame, animateOpacity, frame, fps, overlapFrames]]);
 
-  const scale = interpolate(
+  const scale = useMemo(() => animateScale ? interpolate(
     frame,
     [0, endFrame - startFrame],
     [1, 1.8],
@@ -39,7 +48,7 @@ export const Slide: React.FC<SlideProps> = ({ img, startFrame, endFrame, overlap
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     }
-  );
+  ): 1, [endFrame, startFrame, animateScale, frame]);
 
   return (
     <div

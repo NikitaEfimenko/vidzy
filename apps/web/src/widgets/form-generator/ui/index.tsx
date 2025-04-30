@@ -1,5 +1,6 @@
 
 'use client'
+import { cn, getValueByPath } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Form } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
@@ -7,15 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/shared/ui/separator";
 import { Textarea } from "@/shared/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ListCollapseIcon, Loader, MinusIcon, PlusIcon } from "lucide-react";
+import { Loader, MinusIcon, PlusIcon } from "lucide-react";
 import { FC, memo, ReactElement, ReactNode, useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { z, ZodTypeAny } from "zod";
 import { FileInput, FileInputUrl } from "./file-input";
-import { getValueByPath } from "@/shared/lib/utils";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
 
 
 // const renderFormElement = (
@@ -175,7 +174,8 @@ const FormElement: FC<{
   setValue: any;
   trigger: any;
   defaultValues: Partial<Record<any, any>>;
-}> = ({ keyName, schema, register, errors, control, setValue, trigger, defaultValues }) => {
+  mode?: 'row' | 'column'
+}> = ({ keyName, schema, register, errors, control, setValue, trigger, defaultValues, mode = 'column' }) => {
   if (schema.description === "File") {
     return <FileInput key={keyName} name={keyName} register={register} errors={errors} />;
   }
@@ -209,7 +209,7 @@ const FormElement: FC<{
     );
   }
 
-  if (schema instanceof z.ZodBoolean) {
+  if (schema instanceof z.ZodBoolean || schema.description === "show") {
     return (
       <div key={keyName}>
         <label>{keyName}</label>
@@ -250,7 +250,7 @@ const FormElement: FC<{
   }
 
   if (schema instanceof z.ZodArray) {
-    return <ArrayField keyName={keyName} schema={schema} control={control} register={register} errors={errors} setValue={setValue} trigger={trigger} defaultValues={defaultValues} />;
+    return <ArrayField mode={mode} keyName={keyName} schema={schema} control={control} register={register} errors={errors} setValue={setValue} trigger={trigger} defaultValues={defaultValues} />;
   }
 
   if (schema instanceof z.ZodObject) {
@@ -272,6 +272,7 @@ const FormElement: FC<{
                     setValue={setValue}
                     trigger={trigger}
                     defaultValues={defaultValues}
+                    mode={mode}
                   />
                 ))}
               {/* </AccordionContent> */}
@@ -300,20 +301,21 @@ const ArrayField: FC<{
   setValue: any;
   trigger: any;
   defaultValues: Partial<Record<any, any>>;
-}> = ({ keyName, schema, control, register, errors, setValue, trigger, defaultValues }) => {
+  mode?: 'row' | 'column'
+}> = ({ keyName, schema, control, register, errors, setValue, trigger, defaultValues, mode='column' }) => {
   const { fields, append, remove } = useFieldArray({ control, name: keyName });
 
   return (
 
-    <div key={keyName} className="py-3 flex flex-col gap-4">
-      <Separator />
-      <div className="flex items-center gap-2">
+    <div key={keyName} className={cn("py-3 flex gap-4 flex-col")}>
+      <Separator/>
+      <div className="flex items-center gap-3">
         <label>{keyName} (Array)</label>
         <Button size="sm" type="button" onClick={() => append({})}>
           <PlusIcon /> Add
         </Button>
       </div>
-
+      <div className={cn("py-3 flex gap-3", mode === "column" ? "flex-col" : "flex-row")}>
       {fields.map((item, index) => (
         <div key={item.id} className="mt-2">
           <div className="flex items-center">
@@ -331,9 +333,11 @@ const ArrayField: FC<{
             setValue={setValue}
             trigger={trigger}
             defaultValues={defaultValues}
+            mode={mode}
           />
         </div>
       ))}
+          </div>
       <Separator />
     </div>
   );
@@ -425,10 +429,10 @@ export const FormNoActionGeneratorProvider = memo(({ onResult, onChange, schema,
   );
 });
 
-export const FormGeneratorBody = ({ schema }: GeneratorMainProps) => {
+export const FormGeneratorBody = ({ schema, mode = 'column' }: GeneratorMainProps & {mode?: 'row' | 'column'}) => {
   const form = useFormContext<z.infer<typeof schema>>();
   return (
-    <div className="flex flex-col gap-3">
+    <div className={cn("flex gap-3 flex-col")}>
       {Object.entries(schema.shape ?? {}).map(([key, subSchema]) => (
         <FormElement
           keyName={key}
@@ -438,6 +442,7 @@ export const FormGeneratorBody = ({ schema }: GeneratorMainProps) => {
           control={form.control}
           setValue={form.setValue}
           trigger={form.trigger}
+          mode={mode}
           defaultValues={form.formState.defaultValues ?? {}}
         />
       ))}

@@ -54,3 +54,54 @@ export const transcribeAction = async (
     }
   }
 }
+
+type BackgroundFormState = {
+  jobId?: string
+} & FormState
+
+
+export const transcribeInBackgroundAction = async (
+  prevState: BackgroundFormState,
+  data: FormData 
+): Promise<BackgroundFormState> => {
+  const formData = Object.fromEntries(data)
+
+  const parsed = FileSchema.safeParse(formData['file'])
+  const session = await auth()
+  if (!session?.user) return {
+    isSuccess: false,
+    issues: '401',
+    result: null
+  }
+  if (!parsed.success) {
+    return {
+      result: null,
+      isSuccess: false,
+      issues: parsed.error.message
+    }
+  }
+  try {
+    data.append('userId', session.user.id)
+    const renderHost = process.env?.RENDERER_HOST
+    const res = await fetch(`${renderHost}/jobs/transcribe`, {
+      method: "POST",
+      body: data,
+      headers: {
+         'Authorization': `Bearer ${(session?.user as any).accessToken}`
+      },
+      credentials: "include"
+    })
+    const resData = await res.json() as Partial<BackgroundFormState>
+
+    return {
+      result: resData ?? null,
+      isSuccess: true,
+      jobId: resData.jobId ?? undefined,
+    }
+  } catch {
+    return {
+      result: null,
+      isSuccess: false,
+    }
+  }
+}

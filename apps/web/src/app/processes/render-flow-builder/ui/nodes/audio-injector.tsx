@@ -21,6 +21,6 @@ export const AudioInjectorNode = ({ data }: NodeProps<AudioInjector>) => {
     titleSlot={<NodeIcon className="w-8 h-8" nodeType="audio-injector" />}
     descriptionSlot={<>     {nodeContextSchema["audio-injector"].title}</>}
   >
-    <GenerateSpeechCTA formOnly />
+    <GenerateSpeechCTA backgroundJob formOnly />
   </NodeLayout>
 }

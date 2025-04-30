@@ -16,15 +16,18 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { RedisClientType } from 'redis';
 import { AttachmentsModule } from './attachments/attachments.module';
+import { BullQueueModule } from './bull/bull.module';
+import { LlmModule } from './llm/llm.module';
 import { RendererModule } from './renderer/renderer.module';
 import { StorageModule } from './storage/storage.module';
 import { VoiceModule } from './voice/voice.module';
-import { LlmModule } from './llm/llm.module';
 import { WorkflowsModule } from './workflows/workflows.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
     RedisModule,
+    BullQueueModule,
     ConfigModule.forRoot({
       load: [minioConfig],
       isGlobal: true,
@@ -38,8 +41,11 @@ import { WorkflowsModule } from './workflows/workflows.module';
     StorageModule,
     LlmModule,
     WorkflowsModule,
+    TaskModule,
   ],
-  controllers: [AppController],
+  controllers: [
+    AppController,
+  ],
   // providers: [AppService, JwtStrategy],
   providers: [AppService],
 })

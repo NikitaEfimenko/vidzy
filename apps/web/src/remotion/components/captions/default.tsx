@@ -90,7 +90,7 @@ export const DefaultCaption: React.FC<{
       opacity,
       translate: `0 ${translateY}em`,
       color: textColor, // Текущий цвет текста
-      padding: '1em 0.5em',
+      padding: '0 0.5em',
       fontSize, // Текущий размер шрифта
       textStroke: `2px black`,
       WebkitTextStroke: `2px black`, // Для Safari и старых браузеров

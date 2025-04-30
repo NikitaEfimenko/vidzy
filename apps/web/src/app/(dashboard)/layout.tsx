@@ -30,6 +30,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "../config/auth";
 import { ReactElement } from "react";
+import { TaskManagerWidget } from "@/widgets/task-manager/ui";
 
 
 const geistSans = localFont({
@@ -119,6 +120,9 @@ export default async function RootLayout({
                     </BreadcrumbList>
                   </Breadcrumb>
                 </div>
+                {session.user && <div className="ml-auto px-4">
+                  <TaskManagerWidget userId={session.user.id}/>
+                </div>}
               </header>
               <main className="w-full h-full">
                 <Guard level="Базовая подписка Vidzy"

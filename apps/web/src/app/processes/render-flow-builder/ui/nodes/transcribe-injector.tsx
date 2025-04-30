@@ -18,6 +18,6 @@ export const TranscribeInjectorNode = ({ data }: NodeProps<TranscribeInjector>) 
      <Handle type="target" position={Position.Left} />
      <Handle type="source" position={Position.Right} /></>}
   >
-     <GenerateTranscribeCTA formOnly />
+     <GenerateTranscribeCTA backgroundJob formOnly />
   </NodeLayout>
 }

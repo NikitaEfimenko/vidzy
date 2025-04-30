@@ -30,7 +30,7 @@ export default function Page() {
             <FaTools />
               Text-to-Entity
             </div>
-            <GenerateSpeechCTA />
+            <GenerateSpeechCTA backgroundJob />
             <RequestAIImageCTA />
             <RequestLLMChatResponseCTA/>
             <RequestLLMJsonResponseCTA schema={{
@@ -53,7 +53,7 @@ export default function Page() {
             <FaTools />
               File-to-Entity
             </div>
-            <GenerateTranscribeCTA />
+            <GenerateTranscribeCTA backgroundJob />
             {/* <SeparateAudioCTA /> */}
           </CardContent>
         </Card>

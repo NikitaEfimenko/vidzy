@@ -32,6 +32,7 @@ export const TypewriterCaption: React.FC<SubtitleStyleProps> = ({
     flexWrap: 'wrap',
     justifyContent: 'center',
     padding: '0.5em',
+    WebkitTextStroke: `2px black`, // 
     color: transcriptionColor ?? 'white',
     width: '100%',
   };

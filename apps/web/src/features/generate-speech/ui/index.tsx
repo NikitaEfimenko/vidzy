@@ -1,6 +1,6 @@
 
 'use client'
-import { generateTTSAction } from "@/entities/voice/api/actions/tts-action";
+import { generateTTSAction, generateTTSInBackgroundAction } from "@/entities/voice/api/actions/tts-action";
 import { TTSDtoSchema } from "@/entities/voice/dto";
 import { Button } from "@/shared/ui/button";
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta";
@@ -16,16 +16,18 @@ import { FaLaugh } from "react-icons/fa";
 
 type GenerateSpeechCTAProps = {
   formOnly?: boolean
+  backgroundJob?: boolean
 }
 
 export const GenerateSpeechCTA = React.memo(({
-  formOnly = false
+  formOnly = false,
+  backgroundJob = false
 }: GenerateSpeechCTAProps) => {
   const [inputProps, setInputProps] = useState<any>({})
   const input = useDeferredValue(inputProps)
 
   return <FormGeneratorCTA
-    serverAction={generateTTSAction}
+    serverAction={backgroundJob ? generateTTSInBackgroundAction : generateTTSAction}
     onChange={setInputProps}
     schema={TTSDtoSchema}
     defaultValues={null}

@@ -253,8 +253,8 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof QuizSch
 export const config = {
   durationInFrames: 30 * 20,
   fps: FPS,
-  height: 720,
-  width: 1280,
+  height: 1280,
+  width: 720,
   calculateMetadata
 }
 

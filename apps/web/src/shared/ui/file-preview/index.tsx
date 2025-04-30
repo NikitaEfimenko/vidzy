@@ -1,4 +1,4 @@
-import { FileBoxIcon, FileIcon, PlusIcon, Subtitles } from "lucide-react";
+import { FileBoxIcon, FileIcon, ImagePlayIcon, PlusIcon, Subtitles } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../button";
 import { fileTypeEnum } from "@vidzy/database";
@@ -22,12 +22,21 @@ export const FilePreview = ({
   const resolvedFileType = fileType || (fileUrl ? getFileTypeFromUrl(fileUrl) : 'other');
 
   const imagePreview = fileUrl ? <div className="overflow-hidden w-full rounded-md flex items-center justify-center h-full">
-    {resolvedFileType === "image" && <Image className="aspect-[3/4] h-fit w-fit object-cover"
-      fill alt="" src={fileUrl} />}
+    {resolvedFileType === "image" && (
+      <>
+        {fileUrl.includes(".gif") ? <ImagePlayIcon className="!w-12 !h-12" /> :
+          <Image
+            className="aspect-[3/4] h-fit w-fit object-cover"
+            fill
+            alt=""
+            src={fileUrl}
+          />}
+      </>
+    )}
     {resolvedFileType === "video" && <video controls muted loop className="aspect-[3/4] h-fit w-fit object-cover"
       width={300}
       height={400} src={fileUrl} />}
-    {resolvedFileType === "srt" &&  <Subtitles className="!w-12 !h-12" />}
+    {resolvedFileType === "srt" && <Subtitles className="!w-12 !h-12" />}
     {["other"].some(el => el === resolvedFileType) && <FileBoxIcon className="!w-12 !h-12" />}
     {resolvedFileType === "music" && <audio controls>
       <source src={fileUrl} type="audio/mpeg"></source>

@@ -17,6 +17,7 @@ import { useWorkflowEditor } from "../../services";
 import { WorkflowHandle as Handle } from "../handle";
 import { NodeLayout } from "./node-layout";
 import { DialogSchema } from "@/remotion/scenes/dialog-scene";
+import { QuestSchema } from "@/remotion/scenes/quest-scene";
 
 type FormBuilder = Node<{
   schemaMode: typeof scenes[number]["compositionName"] | 'Custom',
@@ -38,12 +39,20 @@ export const FormBuilder = ({ id, data }: NodeProps<FormBuilder>) => {
         "videos": true,
         "format": true,
         "audioVolume": true,
-        "subtitlesUrl": true
+        "subtitlesUrl": true,
       })
       case "DialogScene": return DialogSchema.pick({
         "dialog": true,
         "format": true,
         "captionType": true
+      })
+      case "QuestScene": return QuestSchema.pick({
+        "answers": true,
+        "coverImgFileName": true,
+        "questions": true,
+        "format": true,
+        "options": true,
+        "timeToRespond": true
       })
       case "PhysicsPreviewScene": return CubesSceneSchema
       case "QuizScene": return QuizSchema
@@ -52,7 +61,8 @@ export const FormBuilder = ({ id, data }: NodeProps<FormBuilder>) => {
         "coverImgFileName": true,
         "subtitlesFileName": true,
         "audioWizEnabled": true,
-        "format": true
+        "format": true,
+        "captionType": true
       })
       default: z.object({})
     }

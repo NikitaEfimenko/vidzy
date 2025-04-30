@@ -38,7 +38,6 @@ export function NavMain({
   const pathname = usePathname()
   return (
     <SidebarGroup>
-      <div className="border-t py-2"></div>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>

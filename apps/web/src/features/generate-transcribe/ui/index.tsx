@@ -1,5 +1,5 @@
 'use client'
-import { transcribeAction } from "@/entities/voice/api/actions/transcribe-action";
+import { transcribeAction, transcribeInBackgroundAction } from "@/entities/voice/api/actions/transcribe-action";
 import { TranscribeDtoSchema } from "@/entities/voice/dto";
 import { Button } from "@/shared/ui/button";
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta";
@@ -11,9 +11,11 @@ const initValues = {
 }
 
 export const GenerateTranscribeCTA = React.memo(({
-  formOnly = false
+  formOnly = false,
+  backgroundJob = false
 }: {
-  formOnly?: boolean
+  formOnly?: boolean,
+  backgroundJob?: boolean
 }) => {
 
   const [inputProps, setInputProps] = useState<any>(initValues)
@@ -21,7 +23,7 @@ export const GenerateTranscribeCTA = React.memo(({
   const input = useDeferredValue(inputProps)
 
   return <FormGeneratorCTA
-    serverAction={transcribeAction}
+    serverAction={backgroundJob ? transcribeInBackgroundAction : transcribeAction}
     onChange={setInputProps}
     schema={TranscribeDtoSchema}
     defaultValues={initValues}

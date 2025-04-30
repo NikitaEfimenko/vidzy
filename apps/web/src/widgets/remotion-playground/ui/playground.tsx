@@ -1,12 +1,12 @@
 
 'use client'
-import { renderVideoAction } from "@/entities/renderer/api/actions"
+import { renderVideoAction, renderVideoInBackgroundAction } from "@/entities/renderer/api/actions"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/ui/card"
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta"
 import { VideoPlayground } from "@/widgets/remotion-playground/ui"
 import { SettingsIcon } from "lucide-react"
-import { useDeferredValue, useEffect, useState } from "react"
+import { useDeferredValue, useEffect, useMemo, useState } from "react"
 import { z } from "zod"
 
 type PlaygroundProps<T extends z.ZodType<any, any, any>,> = {
@@ -17,6 +17,7 @@ type PlaygroundProps<T extends z.ZodType<any, any, any>,> = {
   compositionName: string,
   showSettingsFlat?: boolean
   disableForm?: boolean
+  backgroundJob?: boolean
 }
 
 export const Playground = <T extends z.ZodObject<any>>({
@@ -27,6 +28,7 @@ export const Playground = <T extends z.ZodObject<any>>({
   compositionName,
   showSettingsFlat = false,
   disableForm = false,
+  backgroundJob = false
 }: PlaygroundProps<T>) => {
   const [inputProps, setInputProps] = useState<typeof initInputProps>(initInputProps)
   
@@ -35,6 +37,8 @@ export const Playground = <T extends z.ZodObject<any>>({
   }, [initInputProps])
   
   const input = useDeferredValue(inputProps)
+
+  const action = useMemo(() => backgroundJob ? renderVideoInBackgroundAction : renderVideoAction, [backgroundJob])
 
   return <Card className="bg-accent">
     <CardHeader className="py-2">
@@ -57,7 +61,7 @@ export const Playground = <T extends z.ZodObject<any>>({
     <CardFooter>
       <FormGeneratorCTA
         showForm={!disableForm}
-        serverAction={renderVideoAction.bind(null, compositionName)}
+        serverAction={action.bind(null, compositionName)}
         onChange={setInputProps}
         pendingSlot={<span className="text-xs">It can take from 30 seconds to a minute.</span>}
         schema={schema}

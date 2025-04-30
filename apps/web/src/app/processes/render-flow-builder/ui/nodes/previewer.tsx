@@ -59,6 +59,7 @@ export const PreviewerNode = ({ data, id }: NodeProps<Previewer>) => {
       schema={conf.schema as typeof conf.schema}
       showSettingsFlat
       disableForm
+      backgroundJob
       initInputProps={{ ...conf.initInputProps, ...(data.inputData ?? {}) as Partial<z.infer<typeof conf.schema>> }}
     />}
   </NodeLayout>

@@ -1,22 +1,18 @@
 'use client'
 import { zColor } from "@remotion/zod-types";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import {
   AbsoluteFill,
   Audio,
   CalculateMetadataFunction,
-  continueRender,
-  delayRender,
-  Img,
   Sequence,
   useCurrentFrame,
-  useVideoConfig,
+  useVideoConfig
 } from "remotion";
 import { z } from "zod";
-import { PaginatedSubtitles } from "../components/subtitles";
-import { BaseSceneSchema, getFormatByEnum } from "../helpers";
-import { Slide } from "../components/slide";
 import { SubtitleType } from "../components/captions";
+import { DialogMessage } from "../components/dialog-message";
+import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 
 export const DialogSchema = BaseSceneSchema.extend({
   dialog: z.array(z.object({
@@ -26,6 +22,8 @@ export const DialogSchema = BaseSceneSchema.extend({
     soundUrl: z.string().url().describe("url").optional(),
     avatarUrl: z.string().url().describe("url").optional(),
     durationInSeconds: z.number().min(0),
+    animateScale: z.boolean().describe("show").optional(),
+    animateOpacity: z.boolean().describe("show").optional(),
   })),
   subtitlesTextColor: zColor(),
   subtitlesLinePerPage: z.number().int().min(0),
@@ -42,119 +40,6 @@ export const DialogSchema = BaseSceneSchema.extend({
 
 export type DialogSchemaType = z.infer<typeof DialogSchema>;
 
-const DialogMessage = ({
-  personName,
-  positionPrority = "center",
-  subtitleUrl,
-  soundUrl,
-  avatarUrl,
-  startFrame,
-  endFrame,
-  fps,
-  overlapFrames,
-  subtitlesTextColor,
-  subtitlesLinePerPage,
-  subtitlesZoomMeasurerSize,
-  subtitlesLineHeight,
-  onlyDisplayCurrentSentence,
-  captionType = SubtitleType.DEFAULT
-}: {
-  personName: string;
-  positionPrority?: "left" | "right" | "center" | "top" | "bottom";
-  subtitleUrl?: string;
-  soundUrl?: string;
-  avatarUrl?: string;
-  startFrame: number;
-  endFrame: number;
-  fps: number;
-  overlapFrames: number;
-  subtitlesTextColor: string;
-  subtitlesLinePerPage: number;
-  subtitlesZoomMeasurerSize: number;
-  subtitlesLineHeight: number;
-  onlyDisplayCurrentSentence: boolean;
-  captionType?: SubtitleType
-}) => {
-  const [subtitles, setSubtitles] = useState<string | null>(null);
-  const [handle] = useState(() => delayRender());
-
-  useEffect(() => {
-    if (!subtitleUrl) {
-      continueRender(handle);
-      return;
-    }
-
-    fetch(subtitleUrl)
-      .then((res) => res.text())
-      .then((text) => {
-        setSubtitles(text);
-        continueRender(handle);
-      })
-      .catch((err) => {
-        console.error("Error fetching subtitles", err);
-        continueRender(handle);
-      });
-  }, [handle, subtitleUrl]);
-
-  const positionClasses = {
-    left: "items-start justify-start ml-4",
-    right: "items-end justify-end mr-4",
-    center: "items-center justify-center",
-    top: "items-start justify-center mt-4",
-    bottom: "items-end justify-center mb-4"
-  };
-
-
-  return (<>
-    <AbsoluteFill>
-      {avatarUrl && (
-        <Slide
-          img={avatarUrl}
-          startFrame={startFrame}
-          endFrame={endFrame}
-          fps={fps}
-          overlapFrames={overlapFrames} // Передаем перекрытие в Slide
-        />
-      )}
-    </AbsoluteFill>
-
-
-    <AbsoluteFill>
-
-      <div className={`absolute inset-0 bottom-0 flex min-w-96 transition-all ${positionClasses[positionPrority]} p-4`}>
-        <div className="bg-black bg-opacity-70 rounded-lg p-4 max-w-2xl">
-          {avatarUrl && (
-            <div className="flex items-center mb-2">
-              <Img
-                src={avatarUrl}
-                className="w-14 h-14 rounded-full mr-3"
-              />
-              <span className="text-white text-4xl font-bold" style={{ fontFamily: 'Courier New, monospace'}}>
-                {personName}:</span>
-            </div>
-          )}
-          {/* <div className="bg-white h-[1px] w-full"></div> */}
-          {subtitles && (
-            <div className="text-white py-3">
-              <PaginatedSubtitles
-                subtitles={subtitles}
-                startFrame={startFrame}
-                endFrame={endFrame}
-                linesPerPage={subtitlesLinePerPage}
-                subtitlesTextColor={subtitlesTextColor}
-                subtitlesZoomMeasurerSize={subtitlesZoomMeasurerSize}
-                subtitlesLineHeight={subtitlesLineHeight}
-                onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
-                captionType={captionType}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </AbsoluteFill>
-  </>
-  );
-};
 
 export const DialogComposition = ({
   dialog = [],
@@ -186,6 +71,8 @@ export const DialogComposition = ({
         ...msg,
         startFrame: start,
         endFrame: start + duration,
+        animateOpacity: Boolean(msg.animateOpacity),
+        animateScale: Boolean(msg.animateOpacity),
       };
     });
   }, [dialog, fps]);
@@ -216,6 +103,10 @@ export const DialogComposition = ({
               subtitlesLineHeight={subtitlesLineHeight}
               onlyDisplayCurrentSentence={onlyDisplayCurrentSentence}
               captionType={captionType}
+              animationConfig={{
+                scale: message.animateScale,
+                opacity: message.animateOpacity,
+              }}
             />
           </Sequence>
         ))}
@@ -261,7 +152,7 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof DialogS
 export const config = {
   durationInFrames: 30 * 10, // Default duration if not calculated
   fps: FPS,
-  width: 1280,
-  height: 720,
+  width: 720,
+  height: 1280,
   calculateMetadata,
 };

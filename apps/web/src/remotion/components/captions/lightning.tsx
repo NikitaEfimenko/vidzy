@@ -41,6 +41,8 @@ export const LightningCaption: React.FC<SubtitleStyleProps> = ({
     padding: '0.5em',
     textShadow: `0 0 30px ${textShadowColor}, 0 0 50px ${textShadowColor}`,
     opacity,
+    textStroke: `2px black`,
+    WebkitTextStroke: `2px black`, // 
     color: transcriptionColor ?? "white",
     transform: `translateY(${verticalShake}px) translateX(${horizontalShake}px)`,
   }

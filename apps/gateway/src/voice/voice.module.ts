@@ -8,6 +8,7 @@ import { StorageModule } from 'src/storage/storage.module';
 @Module({
   controllers: [VoiceController],
   providers: [VoiceService],
-  imports: [ConfigModule, AttachmentsModule, StorageModule]
+  imports: [ConfigModule, AttachmentsModule, StorageModule],
+  exports: [VoiceService]
 })
 export class VoiceModule {}

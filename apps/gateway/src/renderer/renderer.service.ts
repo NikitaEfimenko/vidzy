@@ -173,6 +173,7 @@ private convertNumberKeysToArrays(obj: any): any {
         disableWebSecurity: true,
         gl: "angle-egl" 
       },
+      timeoutInMilliseconds: 30000 * 4
     });
   }
 
@@ -194,6 +195,7 @@ private convertNumberKeysToArrays(obj: any): any {
       },
       concurrency: 1,
       inputProps,
+      timeoutInMilliseconds: 30000 * 4
     });
   }
 

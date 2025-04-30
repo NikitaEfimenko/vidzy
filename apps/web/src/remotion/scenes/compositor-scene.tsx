@@ -11,12 +11,15 @@ import {
   delayRender,
   continueRender
 } from "remotion";
+import { spring } from "remotion";
 import { z } from "zod";
 import { zColor } from "@remotion/zod-types";
 import { BaseSceneSchema, getFormatByEnum } from "../helpers";
 import { OffthreadVideo } from "remotion";
 import { useEffect, useRef, useState } from "react";
 import { PaginatedSubtitles } from "../components/subtitles";
+import { CaptionView } from "../components/base-caption";
+import { SubtitleType } from "../components/captions";
 
 export const CompositorSchema = BaseSceneSchema.extend({
   audioFileName: z.string().url().describe("url").optional(),
@@ -25,6 +28,8 @@ export const CompositorSchema = BaseSceneSchema.extend({
   videos: z.array(z.object({
     src: z.string().url().describe("url"),
     durationInSeconds: z.number().min(0),
+    startFromSeconds: z.number().min(0),
+    caption: z.string(),
     transitionDurationInSeconds: z.number().min(0).default(0)
   })),
 
@@ -70,18 +75,36 @@ export const CompositorScene = ({
   }, [handle, subtitlesUrl]);
 
   let currentFrame = 0;
+  // const sequences = videos.map((video, index) => {
+  //   const from = currentFrame;
+  //   const durationInFrames = Math.floor(Number(video.durationInSeconds) * fps);
+  //   const transitionDurationInFrames = Math.floor(Number(video.transitionDurationInSeconds ?? 0) * fps);
+
+  //   currentFrame += durationInFrames - transitionDurationInFrames;
+
+  //   return {
+  //     ...video,
+  //     from,
+  //     durationInFrames,
+  //     transitionDurationInFrames,
+  //     isLast: index === videos.length - 1,
+  //   };
+  // });
+
   const sequences = videos.map((video, index) => {
     const from = currentFrame;
     const durationInFrames = Math.floor(Number(video.durationInSeconds) * fps);
     const transitionDurationInFrames = Math.floor(Number(video.transitionDurationInSeconds ?? 0) * fps);
-
+    const startFromFrame = Math.floor((video.startFromSeconds ?? 0) * fps); // ← добавили
+  
     currentFrame += durationInFrames - transitionDurationInFrames;
-
+  
     return {
       ...video,
       from,
       durationInFrames,
       transitionDurationInFrames,
+      startFromFrame,
       isLast: index === videos.length - 1,
     };
   });
@@ -128,18 +151,36 @@ export const CompositorScene = ({
               from={seq.from}
               durationInFrames={seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames)}
             >
+              <div className="absolute inset-0 bottom-0 flex px-6 transition-all items-center justify-center">
+                {seq.caption && <div className="px-4 py-2 bg-black bg-opacity-70 z-10 mt-96">
+                  <CaptionView
+                  frame={frame}
+                  subtitleType={SubtitleType.GLITCH}
+                  item={{
+                    "startMs": seq.from + 70,
+                    "text": seq.caption,
+                    timestampMs: seq.from,
+                    "confidence": 1,
+                    "endMs": seq.from + seq.durationInFrames + (seq.isLast ? 0 : seq.transitionDurationInFrames)
+                  }}
+                />
+                </div>
+                }
+              </div>
+
               <AbsoluteFill>
                 {/* ▶️ Основное видео (первое в паре) */}
                 <OffthreadVideo
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover",
+                    objectFit: "inherit",
                     mixBlendMode: 'screen',
                     opacity: fromOpacity, // ← затухание
                   }}
                   volume={currentVolume}
                   src={seq.src}
+                  startFrom={seq.startFromFrame}
                 />
               </AbsoluteFill>
 
@@ -155,12 +196,12 @@ export const CompositorScene = ({
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover",
+                      objectFit: "fill",
                       mixBlendMode: 'screen',
                     }}
                     src={sequences[i + 1].src}
                     muted // важно!
-                    startFrom={0}
+                    startFrom={sequences[i + 1].startFromFrame}
                   />
                 </AbsoluteFill>
               )}
@@ -208,11 +249,15 @@ export const initInputProps = {
       src: "https://storage.procat-saas.online/vidzy/1743640720016-renderer_storyscene_dd1eee6b-e52d-4745-9f26-a90d29a20e0a.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250403%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250403T003842Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=89cf0d3ab4037236d0417ddb1b47a9dbda26f6d7c7abe9b6baded2f311088123",
       durationInSeconds: 8,
       transitionDurationInSeconds: 1,
+      startFromSeconds: 0,
+      caption: ""
     },
     {
       src: "https://storage.procat-saas.online/vidzy/1743732355972-renderer_storyscene_b67291df-a8dd-41d8-bcf4-b2e811b13d44.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=dHv3V0J5Z9Y47lQPqfpZ%2F20250404%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250404T020559Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d270b1c9fa439854362ae0957305d985340334a8d1481bbb8c5f8f52f23ddca9",
       durationInSeconds: 10,
       transitionDurationInSeconds: 0,
+      startFromSeconds: 0,
+      caption: ""
     }
   ],
   format: "16:9",
@@ -257,7 +302,7 @@ export const calculateMetadata: CalculateMetadataFunction<z.infer<typeof Composi
 export const config = {
   durationInFrames: 30 * 10,
   fps: FPS,
-  width: 1280,
-  height: 720,
+  width: 720,
+  height: 1280,
   calculateMetadata
 };

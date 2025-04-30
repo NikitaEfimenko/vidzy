@@ -27,6 +27,8 @@ export const GlitchCaption: React.FC<SubtitleStyleProps> = ({
     textShadow: "0 0 10px rgba(255, 255, 255, 0.5)",
     transform: `translateX(${glitchX}px) translateY(${glitchY}px)`,
     opacity,
+    textStroke: `2px black`,
+    WebkitTextStroke: `2px black`, // Для Safari и старых браузеров
     color: transcriptionColor ?? "white",
   }
 

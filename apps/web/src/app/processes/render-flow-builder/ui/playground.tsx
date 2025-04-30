@@ -14,26 +14,24 @@ import {
   type OnEdgesChange,
   type OnNodeDrag,
   type OnNodesChange,
-  type PanelPosition,
   Panel,
   ReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Button } from '@/shared/ui/button';
+import { Card } from '@/shared/ui/card';
+import { SaveWorkflowCTA } from '@/widgets/workflow-forms/ui/update-cta';
+import { LucideHelpCircle, MapIcon } from 'lucide-react';
 import { nodeFactory } from '../config';
 import { useWorkflowEditor } from '../services';
 import { CustomNodeType } from '../types';
 import { edgeTypes, nodeTypes } from './nodes';
-import { SaveWorkflowCTA } from '@/widgets/workflow-forms/ui/update-cta';
-import { RestoreWorkflowCTA } from '@/widgets/workflow-forms/ui/restore-cta';
-import { Card } from '@/shared/ui/card';
-import { Button } from '@/shared/ui/button';
-import { LucideHelpCircle, MapIcon } from 'lucide-react';
-import { MdHelp } from 'react-icons/md';
 
 const fitViewOptions: FitViewOptions = {
-  padding: 0.2,
+  padding: 0.1,
+  includeHiddenNodes: false,
 };
  
 const defaultEdgeOptions: DefaultEdgeOptions = {
@@ -129,6 +127,7 @@ export const WorkflowPlayground = ({
       fitView
       proOptions={{ hideAttribution: true }}
       fitViewOptions={fitViewOptions}
+      minZoom={0.1}
       defaultEdgeOptions={defaultEdgeOptions}
     >
       <Controls />

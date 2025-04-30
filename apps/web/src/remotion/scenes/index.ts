@@ -4,6 +4,7 @@ import * as QuizScene from "./quiz-scene"
 import * as CubesScene from "./cubes-physics"
 import * as CompositorScene from "./compositor-scene"
 import * as DialogScene from "./dialog-scene"
+import * as QuestScene from "./quest-scene"
 
 export const scenes = [
   {
@@ -45,5 +46,13 @@ export const scenes = [
     config: DialogScene.config,
     initInputProps: DialogScene.initInputProps,
     calculateMetadata: DialogScene.calculateMetadata
+  },
+  {
+    composition: QuestScene.QuestComposition,
+    schema: QuestScene.QuestSchema,
+    compositionName: QuestScene.compositionName,
+    config: QuestScene.config,
+    initInputProps: QuestScene.initInputProps,
+    calculateMetadata: QuestScene.calculateMetadata
   }
 ]

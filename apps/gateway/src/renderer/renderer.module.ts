@@ -7,6 +7,7 @@ import { AttachmentsModule } from 'src/attachments/attachments.module';
 @Module({
   controllers: [RenderController],
   providers: [RenderService],
-  imports: [ConfigModule, AttachmentsModule]
+  imports: [ConfigModule, AttachmentsModule],
+  exports: [RenderService]
 })
 export class RendererModule {}

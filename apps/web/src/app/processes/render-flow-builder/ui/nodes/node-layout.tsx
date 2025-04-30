@@ -12,7 +12,7 @@ type NodeLayoutProps = {
   descriptionSlot?: ReactElement,
   handlersSlot?: ReactElement,
   className?: string
-  onRefresh?: () => void
+  onRefresh?: () => void,
 }
 
 export const NodeLayout = ({
@@ -20,8 +20,8 @@ export const NodeLayout = ({
   titleSlot,
   descriptionSlot,
   handlersSlot,
-  className,
-  onRefresh
+  onRefresh,
+  className = 'max-w-[400px]',
 }: NodeLayoutProps) => {
   const [renderKey, setRenderKey] = useState(0);
 
@@ -34,7 +34,7 @@ export const NodeLayout = ({
 
   return (
 
-    <Card className={cn("bg-accent relative border max-w-[400px] px-0", className)}
+    <Card className={cn("bg-accent relative border px-0", className)}
     onPointerDown={(e) => e.stopPropagation()}
     onDragStart={(e) => e.preventDefault()}
     >

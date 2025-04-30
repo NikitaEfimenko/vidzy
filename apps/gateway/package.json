@@ -22,6 +22,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
@@ -38,6 +39,7 @@
     "@vidzy/database": "workspace:*",
     "adm-zip": "^0.5.16",
     "bcrypt": "^5.1.1",
+    "bullmq": "^5.51.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "connect-redis": "^7.1.1",
