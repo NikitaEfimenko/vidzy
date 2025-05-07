@@ -16,7 +16,7 @@ interface WorkflowPanelProps {
 }
 
 export const WorkflowPanel = ({
-  defaultLayout = [15, 75, 10],
+  defaultLayout = [20, 70, 10],
   defaultCollapsed = false,
   navCollapsedSize,
   navSlot,
@@ -29,7 +29,6 @@ export const WorkflowPanel = ({
     <ResizablePanelGroup
       direction="horizontal"
       onLayout={(sizes: number[]) => {
-        console.log(sizes)
         document.cookie = `react-resizable-panels-workflows:layout=${JSON.stringify(
           sizes
         )}`

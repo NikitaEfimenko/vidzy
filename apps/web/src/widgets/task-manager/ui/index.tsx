@@ -13,6 +13,7 @@ import { Progress } from "@/shared/ui/progress"
 import { ScrollArea } from "@/shared/ui/scroll-area"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import Link from "next/link"
+import { CancelTaskCTA } from "./cancel-task-cta"
 
 export type TaskStatus = "pending" | "in-progress" | "completed" | "failed"
 
@@ -144,7 +145,6 @@ export const TaskManagerWidget = ({ userId }: TaskManagerWidgetProps) => {
 }
 
 function TaskItem({ task }: { task: Task }) {
-  console.log(task.returnvalue)
   return (
     <div className="flex flex-col gap-3 rounded-md p-3 hover:bg-muted relative">
       {task.status === "in-progress" && <Progress className="w-full" value={task.progress ?? 1} />}
@@ -183,6 +183,9 @@ function TaskItem({ task }: { task: Task }) {
             </DialogContent>
           </Dialog>
         )}
+        {(["pending"] as Array<typeof task.status>).includes(task.status) &&
+          <div className="absolute bottom-2 right-2">
+            <CancelTaskCTA taskId={task.id} /></div>}
       </div>
     </div>
   )

@@ -11,6 +11,7 @@ import { and, eq, exists, or } from "drizzle-orm"
 import Link from "next/link"
 import { Suspense } from "react"
 import { SharingLinksList } from "./share-links-list"
+import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area"
 
 const getWorkflows = async (userId: string) => {
   return db
@@ -43,7 +44,8 @@ export const WorkflowsList = async ({
 
   const workflows = await getWorkflows(session?.user.id)
 
-  return <>
+  return <ScrollArea className="h-max w-full whitespace-nowrap overflow-auto rounded-md">
+    <div className="flex flex-col gap-2 h-max">
     {workflows.map(workflow => <Card id={workflow.id} className={cn("relative h-36 flex flex-col items-center justify-center", selected === workflow.id && "border-primary")}>
       <CardHeader>
         <Link id={workflow.id} href={`/visual-renderer/${workflow.id}`}>
@@ -64,5 +66,7 @@ export const WorkflowsList = async ({
         } workflowId={workflow.id} />
       </div>
     </Card>)}
-  </>
+    <ScrollBar orientation="vertical" />
+    </div>
+  </ScrollArea>
 }

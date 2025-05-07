@@ -82,9 +82,9 @@ export default async function RootLayout({
   }
 
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex flex-col overflow-hidden`}
       >
         <Providers>
           <SidebarProvider>
@@ -101,8 +101,8 @@ export default async function RootLayout({
               ></Guard>
               }
             />
-            <SidebarInset>
-              <header className="flex h-16 shrink-0 items-center gap-2">
+            <SidebarInset className="flex flex-col h-full overflow-hidden">
+              <header className="flex border-b shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2 px-4 w-full">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
@@ -120,11 +120,11 @@ export default async function RootLayout({
                     </BreadcrumbList>
                   </Breadcrumb>
                 </div>
-                {session.user && <div className="ml-auto px-4">
+                {session.user && <div className="ml-auto p-2">
                   <TaskManagerWidget userId={session.user.id}/>
                 </div>}
               </header>
-              <main className="w-full h-full">
+              <div className="flex-1 overflow-auto">
                 <Guard level="Базовая подписка Vidzy"
                   expiredFallback={expiredFallback}
                   noAccessFallback={notAccessFallback}
@@ -133,7 +133,7 @@ export default async function RootLayout({
                     {children}
                   </>
                 </Guard>
-              </main>
+              </div>
               <Toaster />
             </SidebarInset>
           </SidebarProvider>

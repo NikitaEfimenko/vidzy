@@ -3,10 +3,15 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, Job } from 'bullmq';
 import { BullQueue } from 'src/bull/bull-queue.enum';
 import { TaskWithQueue } from './dto/task-with-queue.dto';
+import { Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class TaskService {
   private queueMap: Record<string, Queue>;
+  private readonly logger = new Logger(TaskService.name);
+  private readonly STUCK_THRESHOLD_MS = 12 * 60 * 60 * 1000; // 12 часов
+
 
   constructor(
     @InjectQueue(BullQueue.TTS) private readonly ttsQueue: Queue,
@@ -19,6 +24,30 @@ export class TaskService {
       [BullQueue.RENDER]: this.renderQueue,
     };
   }
+
+  @Cron(CronExpression.EVERY_11_HOURS)
+  async cleanStuckPendingTasks(): Promise<void> {
+    const now = Date.now();
+
+    for (const [queueName, queue] of Object.entries(this.queueMap)) {
+      const waitingJobs = await queue.getWaiting();
+
+      for (const job of waitingJobs) {
+        const age = now - job.timestamp;
+        if (age > this.STUCK_THRESHOLD_MS) {
+          try {
+            await job.remove();
+            this.logger.warn(
+              `Removed stuck pending job ${job.id} from [${queueName}], age: ${Math.round(age / 1000)}s`,
+            );
+          } catch (e) {
+            this.logger.error(`Failed to remove job ${job.id} from [${queueName}]: ${e.message}`);
+          }
+        }
+      }
+    }
+  }
+
 
   private async getJobsWithQueueName(queueName: string, queue: Queue): Promise<TaskWithQueue[]> {
     const jobs = await queue.getJobs(['waiting', 'active', 'completed', 'failed', 'delayed']);
@@ -53,14 +82,17 @@ export class TaskService {
     for (const [name, queue] of Object.entries(this.queueMap)) {
       const job = await queue.getJob(id);
       if (job) {
-        return Object.assign(job, { queueName: name });
+        return {
+          ...job.toJSON(),
+          queueName: name,
+        }
       }
     }
     throw new NotFoundException('Task not found');
   }
 
   async cancelTask(id: string): Promise<void> {
-    const job = await this.getTaskById(id); // includes queueName
+    const job = await this.getTaskById(id);
     const queue = this.queueMap[job.queueName];
     const realJob = await queue.getJob(id);
     const state = await realJob.getState();

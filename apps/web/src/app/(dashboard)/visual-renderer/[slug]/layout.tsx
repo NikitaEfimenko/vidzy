@@ -26,7 +26,7 @@ export default async function EditorLayout({
     return <></>
   }
 
-  return <div className="hidden flex-col md:flex flex-auto h-full w-full">
+  return <div className="hidden flex-col md:flex flex-auto w-full h-full">
     <ReactFlowProvider>
       <WorkflowPanel
         defaultLayout={defaultLayout}
