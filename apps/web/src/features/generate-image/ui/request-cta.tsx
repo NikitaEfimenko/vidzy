@@ -52,7 +52,7 @@ export const RequestAIImageCTA = ({
     </>
     }
     ctaSlot={
-      formOnly ? undefined : <Button size="sm"><FaMagic />Generate Image</Button>
+      formOnly ? undefined : <Button variant="secondary"><FaMagic />Generate Image</Button>
     }
   />
 }

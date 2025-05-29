@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 import { AttachmentsModelType } from "../dto/model"
 import { db } from "@/app/config/db"
 import { attachments, fileTypeEnum } from "@vidzy/database"
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 
 type FormState = {
   url: string | null,
@@ -112,6 +112,54 @@ export const removeAttachment = async (
   }
 }
 
+
+export async function batchRemoveAttachments(
+  ids: Array<NonNullable<AttachmentsModelType["id"]>>,
+  prevState: FormStateRemove,
+  data: FormData
+) {
+  const session = await auth()
+
+  if (!session) return {
+    message: "401"
+  }
+  if (ids.length <= 0) {
+    return {
+      message: "entity ids required"
+    }
+  }
+
+  try {
+    // Получаем все вложения для проверки существования
+    const existingAttachments = await db
+      .select()
+      .from(attachments)
+      .where(inArray(attachments.id, ids));
+
+    // Проверяем, что все запрошенные вложения существуют
+    if (existingAttachments.length !== ids.length) {
+      const missingIds = ids.filter(
+        id => !existingAttachments.some(att => att.id === id)
+      );
+      throw new Error(`Вложения не найдены: ${missingIds.join(", ")}`);
+    }
+
+    // Удаляем все вложения разом
+    const deletedAttachments = await db
+      .delete(attachments)
+      .where(inArray(attachments.id, ids))
+      .returning();
+
+    revalidatePath("/attachments");
+  } catch (e) {
+    return {
+      message: String(e)
+    };
+  }
+  return {
+    message: "success"
+  }
+}
 
 export async function getAttachments({
   userId,

@@ -4,7 +4,7 @@ import { generateTTSAction, generateTTSInBackgroundAction } from "@/entities/voi
 import { TTSDtoSchema } from "@/entities/voice/dto";
 import { Button } from "@/shared/ui/button";
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta";
-import { BookMarkedIcon, LaughIcon, Music, PlusSquareIcon } from "lucide-react";
+import { BookMarkedIcon, LaughIcon, Music, PlusSquareIcon, Speech } from "lucide-react";
 import React, { useDeferredValue, useState } from "react";
 
 import {
@@ -60,6 +60,6 @@ export const GenerateSpeechCTA = React.memo(({
       </HoverCard>
     }
     pendingSlot={<span className="text-xs">May take a couple of minutes</span>}
-    ctaSlot={formOnly ? undefined : <Button size="sm"><PlusSquareIcon />Generate Text-to-Speech</Button>}
+    ctaSlot={formOnly ? undefined : <Button size="sm" variant="secondary"><Speech />Text-to-Speech</Button>}
   />
 })

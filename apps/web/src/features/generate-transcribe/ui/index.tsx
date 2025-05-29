@@ -3,7 +3,7 @@ import { transcribeAction, transcribeInBackgroundAction } from "@/entities/voice
 import { TranscribeDtoSchema } from "@/entities/voice/dto";
 import { Button } from "@/shared/ui/button";
 import { FormGeneratorCTA } from "@/widgets/form-generator/ui/generator-cta";
-import { PlusSquareIcon } from "lucide-react";
+import { PlusSquareIcon, TextIcon } from "lucide-react";
 import React, { useDeferredValue, useState } from "react";
 
 const initValues = {
@@ -28,7 +28,7 @@ export const GenerateTranscribeCTA = React.memo(({
     schema={TranscribeDtoSchema}
     defaultValues={initValues}
     pendingSlot={<span className="text-xs">It may take about 30 seconds.</span>}
-    ctaSlot={formOnly ? undefined : <Button size="sm"><PlusSquareIcon/>Generate Transcribe</Button>}
+    ctaSlot={formOnly ? undefined : <Button variant="secondary"><TextIcon/>Transcription</Button>}
   />
 
 })

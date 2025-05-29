@@ -2,3 +2,4 @@ node_modules/
 .turbo
 bark-server/*
 .vscode
+.continue

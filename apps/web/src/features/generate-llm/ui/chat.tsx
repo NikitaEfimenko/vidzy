@@ -24,7 +24,7 @@ export const RequestLLMChatResponseCTA = ({
   return <FormAction
     title="LLM chat"
     description="LLM chat"
-    ctaSlot={formOnly ? undefined : <Button size="sm"><MessageCircleIcon></MessageCircleIcon>Chat with LLM</Button>}
+    ctaSlot={formOnly ? undefined : <Button variant="secondary"><MessageCircleIcon></MessageCircleIcon>Chat with LLM</Button>}
     formSlot={
       <div className="flex flex-col w-full max-w-md  mx-auto stretch gap-3">
         <Card className="bg-muted-foreground border-0 flex flex-col gap-4 min-h-0">

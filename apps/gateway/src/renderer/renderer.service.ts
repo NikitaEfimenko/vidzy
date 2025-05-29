@@ -171,7 +171,7 @@ private convertNumberKeysToArrays(obj: any): any {
         ignoreCertificateErrors: true,
         enableMultiProcessOnLinux: false,
         disableWebSecurity: true,
-        // gl: "angle-egl" 
+        gl: "angle-egl" 
       },
       timeoutInMilliseconds: 30000 * 4
     });
@@ -191,7 +191,7 @@ private convertNumberKeysToArrays(obj: any): any {
         enableMultiProcessOnLinux: true,
         ignoreCertificateErrors: true,
         disableWebSecurity: true,
-        // gl: "angle-egl",
+        gl: "angle-egl",
       },
       concurrency: 1,
       inputProps,

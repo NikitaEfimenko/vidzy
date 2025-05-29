@@ -12,6 +12,7 @@ import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { Badge } from "@/shared/ui/badge";
 import { fileTypeEnum } from "@vidzy/database";
 import { FaSadCry } from "react-icons/fa";
+import { RemoveAttachmentCTA } from "@/widgets/attachment-forms/ui/delete-cta";
 
 const fileTypeOptions = [
   {
@@ -150,9 +151,12 @@ export const FileSelector = ({
               {attachmentsData?.map((attachment) => (
                 <div
                   key={attachment.id}
-                  className={`flex-1 min-w-64 w-full relative border rounded-lg p-2 cursor-pointer`}
+                  className={`flex-1 min-w-64 w-full relative rounded-lg p-2 cursor-pointer`}
                   onClick={() => handleSelect(attachment)}
                 >
+                  {withRemove && <div className="absolute z-10 right-0 top-0">
+                    <RemoveAttachmentCTA id={attachment.id} />
+                  </div>}
                   {withCaption && (
                     <div className="absolute z-10 right-0 bottom-0">
                       <CopyItem

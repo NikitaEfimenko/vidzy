@@ -42,7 +42,7 @@ export const RequestLLMJsonResponseCTA = ({
   return <FormAction
     title="JSON generation"
     description="LLM JSON generation"
-    ctaSlot={formOnly ? undefined :<Button size="sm"><FileJsonIcon />Generate JSON</Button>}
+    ctaSlot={formOnly ? undefined : <Button variant="secondary"><FileJsonIcon />Generate JSON</Button>}
     formSlot={<div className='flex flex-col gap-2'>
       <Tabs defaultValue="account" className="w-full">
         <TabsList className="flex items-center gap-2">

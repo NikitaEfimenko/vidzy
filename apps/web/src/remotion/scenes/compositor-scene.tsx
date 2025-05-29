@@ -118,6 +118,7 @@ export const CompositorScene = ({
           <Audio
             src={audioFileName}
             volume={Math.max(0, Math.min(1, audioVolume / 100))}
+            loop
           />
         )}
 
